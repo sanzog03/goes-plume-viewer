@@ -17,12 +17,12 @@ export function DashboardContainer() {
     const fetchData = async () => {
         try {
             // fetch in the collection from the features api
-            const collectionUrl = `${process.env.REACT_APP_FEATURES_API_URL}/collections/${collectionId}`;
+            const collectionUrl = `${process.env.REACT_APP_STAC_API_URL}/collections/${collectionId}`;
             // use this url to find out the data frequency of the collection
             // store to a state. 
 
             // get all the collection items
-            const collectionItemUrl = `${process.env.REACT_APP_FEATURES_API_URL}/collections/${collectionId}/items`;
+            const collectionItemUrl = `${process.env.REACT_APP_STAC_API_URL}/collections/${collectionId}/items`;
             
             const data = await fetchAllFromSTACAPI(collectionItemUrl);
             setCollectionItems(data)

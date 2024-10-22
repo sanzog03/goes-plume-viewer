@@ -71,8 +71,10 @@ export class MapBoxViewer extends Component {
     componentDidUpdate(prevProps, prevState) {
         if (this.props.data !== prevProps.data) {
             // data comes after some time async
-            console.log("!!!There")
             this.plotPlumes(this.props.data);
+            // this.props.data.forEach((data, idx) => {
+            //     this.addRaster(data, idx)                
+            // })
         }
     }
 
@@ -104,15 +106,17 @@ export class MapBoxViewer extends Component {
     }
 
     addRaster(feature, uniqueId) {
-        const collection = "goes-ch4";
-        const assets = "rad";
+        console.log(feature)
+        const collection = "goes-ch4"; // feature.collection
+        const assets = "rad"; // first element in the asset json object. i.e. Object.keys(features.assets)[0]
+
         const VMIN = 0;
         const VMAX = 1500;
 
         const TILE_URL =
-            `https://dev.ghg.center/ghgcenter/api/raster/collections/${collection}/tiles/WebMercatorQuad/{z}/{x}/{y}@1x` +
+            // `https://earth.gov/ghgcenter/api/raster/collections/${collection}/tiles/WebMercatorQuad/{z}/{x}/{y}@1x` +
+            `${process.env.REACT_APP_RASTER_API_URL}/collections/${collection}/tiles/WebMercatorQuad/{z}/{x}/{y}@1x` +
             "?item=" +
-            feature.id +
             "&assets=" +
             assets +
             "&bidx=1&colormap_name=plasma&rescale=" +
