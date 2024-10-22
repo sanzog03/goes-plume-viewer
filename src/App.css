@@ -36,3 +36,22 @@
     transform: rotate(360deg);
   }
 }
+
+/* Height 100% fix */
+
+html, body, #root {
+  height: 100%;
+}
+
+.fullSize {
+  height: 100%;
+  width: 100%;
+}
+
+.fullHeight {
+  height: 100%;
+}
+
+.fullWidth {
+  width: 100%;
+}
