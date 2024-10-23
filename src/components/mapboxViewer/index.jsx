@@ -72,6 +72,8 @@ export class MapBoxViewer extends Component {
         if (this.props.data !== prevProps.data) {
             // data comes after some time async
             this.plotPlumes(this.props.data);
+
+            // For testing only
             // this.props.data.forEach((data, idx) => {
             //     this.addRaster(data, idx)                
             // })
@@ -106,26 +108,24 @@ export class MapBoxViewer extends Component {
     }
 
     addRaster(feature, uniqueId) {
-        console.log(feature)
         const collection = "goes-ch4"; // feature.collection
         const assets = "rad"; // first element in the asset json object. i.e. Object.keys(features.assets)[0]
 
         const VMIN = 0;
-        const VMAX = 1500;
+        const VMAX = 0.2;
+
+        const colorMap = ["viridis", "magma", "plasma", "earth", "ocean", "terrain", "grey"]
 
         const TILE_URL =
-            // `https://earth.gov/ghgcenter/api/raster/collections/${collection}/tiles/WebMercatorQuad/{z}/{x}/{y}@1x` +
             `${process.env.REACT_APP_RASTER_API_URL}/collections/${collection}/tiles/WebMercatorQuad/{z}/{x}/{y}@1x` +
             "?item=" +
             "&assets=" +
             assets +
-            "&bidx=1&colormap_name=plasma&rescale=" +
+            "&bidx=1&colormap_name=magma&rescale=" +
             VMIN +
             "%2C" +
             VMAX +
             "&nodata=-9999";
-        
-        console.log(TILE_URL)
             
         let map = this.state.currentViewer;
         const rasterSourceId = "raster-source-" + uniqueId; 

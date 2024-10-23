@@ -12,10 +12,10 @@ export const fetchAllFromSTACAPI = async (STACApiUrl) => {
         requiredResult.push(...getResultArray(jsonResult));
 
         // need to pull in remaining data based on the pagination information
-        const { matched, returned, limit } = jsonResult.context;
+        const { matched, returned } = jsonResult.context;
         if (matched > returned) {
-          let remainingData = await fetchRemainingData(STACApiUrl, matched, returned, limit);
-          requiredResult.push(...remainingData);
+          let allData = await fetchAllDataSTAC(STACApiUrl, matched);
+          requiredResult = [...allData];
         }
         return requiredResult;
       } catch (error) {
@@ -23,34 +23,18 @@ export const fetchAllFromSTACAPI = async (STACApiUrl) => {
       }
 }
 
-const fetchRemainingData = async (STACApiUrl, numberMatched, numberReturned, limit) => {
-    let remaining = numberMatched - numberReturned;
-    // so we still have some remaining data to fetch
-    let batches = Math.ceil(remaining / limit);
-    let offsets = []; // when we are pulling data in the capacity of 1000 per batches
-    for (let i = 1; i <= batches; i++) {
-      offsets.push(i * limit);
-    }
-
-    let dataFetchPromises = [];
-
-    offsets.forEach(async (offset) => {
-        const response = fetch(addOffsetsToURL(STACApiUrl, offset, limit));
-        dataFetchPromises.push(response);
-    });
-
-    try {
-        let results = await Promise.all(dataFetchPromises);
-        let jsonResult = await Promise.all(results.map(result => result.json()));
-        let remainingRequiredResult = [];
-        jsonResult.forEach(data => {
-            remainingRequiredResult.push(...getResultArray(data));
-        });
-        return remainingRequiredResult;
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    }
+const fetchAllDataSTAC = async (STACApiUrl, numberMatched) => {
+  // NOTE: STAC API doesnot accept offset as a query params. So, need to pull all the items using limit.
+  try {
+      const fullDataPromise = fetch(addOffsetsToURL(STACApiUrl, 0, numberMatched));
+      let result = await fullDataPromise;
+      let jsonResult = await result.json();
+      let allResult = [ ...getResultArray(jsonResult) ];
+      return allResult;
+  } catch (error) {
+    console.error('Error fetching data:', error);
   }
+}
 
 // helpers
 
