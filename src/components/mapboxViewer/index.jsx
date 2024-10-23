@@ -49,12 +49,18 @@ export class MapBoxViewer extends Component {
         map.on('zoomend', () => {
             const zoomLevel = map.getZoom();
             const bounds = map.getBounds();
-            this.setState({zoomLevel: zoomLevel, bounds: bounds});
+            console.log("zoomed in ~~~~~>", zoomLevel, " x ", bounds);
 
             if (zoomLevel > 6.8) {
                 // find the rasters that falls inside the bounds
                 console.log("add in rasters!!!!")
             }
+        })
+
+        map.on('moveend', () => {
+            const zoomLevel = map.getZoom();
+            const bounds = map.getBounds();
+            console.log("Panned/Moved ~~~~~>", zoomLevel, " x ", bounds);
         })
 
         this.setState({currentViewer: map});
@@ -64,19 +70,21 @@ export class MapBoxViewer extends Component {
         if (this.props.data) {
             // no data in the start.
             console.log("!!!HERE")
-            // this.plotPlumes(this.props.data);
+            // this.plotPlumesMarker(this.props.data);
         }
     }
 
     componentDidUpdate(prevProps, prevState) {
         if (this.props.data !== prevProps.data) {
             // data comes after some time async
-            this.plotPlumes(this.props.data);
+            this.plotPlumesMarker(this.props.data);
 
+            console.log("data>>>>", this.props.data)
+            console.log("metadata>>>>", this.props.metaData)
             // For testing only
-            // this.props.data.forEach((data, idx) => {
-            //     this.addRaster(data, idx)                
-            // })
+            this.props.data.forEach((data, idx) => {
+                this.addRaster(data, idx)
+            })
         }
     }
 
@@ -89,7 +97,7 @@ export class MapBoxViewer extends Component {
         });
     }
 
-    plotPlumes = (features) => {
+    plotPlumesMarker = (features) => {
         const uniqueLocationsSet = new Set();
         features.forEach(feature => {
             const { bbox } = feature;
@@ -110,18 +118,24 @@ export class MapBoxViewer extends Component {
     addRaster(feature, uniqueId) {
         const collection = "goes-ch4"; // feature.collection
         const assets = "rad"; // first element in the asset json object. i.e. Object.keys(features.assets)[0]
+        let VMIN = 0;
+        let VMAX = 0.2;
+        let colorMap = "magma";
 
-        const VMIN = 0;
-        const VMAX = 0.2;
-
-        const colorMap = ["viridis", "magma", "plasma", "earth", "ocean", "terrain", "grey"]
+        if (this.props.metaData) {
+            const { colormap_name, rescale } = this.props.metaData.renders[`${assets}`]
+            colorMap = colormap_name;
+            [ VMIN, VMAX ] = rescale;
+        }
 
         const TILE_URL =
             `${process.env.REACT_APP_RASTER_API_URL}/collections/${collection}/tiles/WebMercatorQuad/{z}/{x}/{y}@1x` +
             "?item=" +
             "&assets=" +
             assets +
-            "&bidx=1&colormap_name=magma&rescale=" +
+            "&bidx=1" +
+            "&colormap_name=" + colorMap +
+            "&rescale=" +
             VMIN +
             "%2C" +
             VMAX +

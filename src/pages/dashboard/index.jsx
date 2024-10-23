@@ -4,7 +4,7 @@ import { MapBoxViewer } from '../../components/mapboxViewer';
 
 import "./index.css";
 
-export function Dashboard({ data, zoomLevel }) {
+export function Dashboard({ data, metaData, zoomLevel }) {
 
   // lets see where the sources of data are from.
   // format of FeatureCollection Id: <something>_<station/region(BV1)>_<datetime></datetime>
@@ -24,7 +24,7 @@ export function Dashboard({ data, zoomLevel }) {
   return (
     <Box className="fullSize">
       <div id="dashboard-map-container">
-        <MapBoxViewer data={data}/>
+        <MapBoxViewer data={data} metaData={metaData}/>
       </div>
     </Box>
   );
