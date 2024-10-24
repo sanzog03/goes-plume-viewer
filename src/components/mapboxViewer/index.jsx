@@ -4,6 +4,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 
 import './index.css';
 
@@ -21,10 +22,18 @@ export class MapBoxViewer extends Component {
             currentViewer: null,
             zoomLevel: null,
             bounds: null,
+            selectedPlumeId: null,
+            selectedRegion: null,
+            addedPlumeLayer: [],
+            addedPlumeSource: []
         }
         // functions
         this.getMeanCenterOfLocation = getMeanCenterOfLocation;
         this.getMarkerSVG = getMarkerSVG;
+
+        // 
+        this.currentSourceId = null;
+        this.currentLayerId = null; 
     }
 
     componentDidMount() {
@@ -75,16 +84,15 @@ export class MapBoxViewer extends Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        if (this.props.data !== prevProps.data) {
+        if (this.props.plots !== prevProps.plots) {
             // data comes after some time async
-            this.plotPlumesMarker(this.props.data);
+            // first save them: [dataTree, plots]
 
-            console.log("data>>>>", this.props.data)
-            console.log("metadata>>>>", this.props.metaData)
-            // For testing only
-            this.props.data.forEach((data, idx) => {
-                this.addRaster(data, idx)
-            })
+            this.plotPlumesMarker(this.props.plots);
+            // // For testing only
+            // this.props.data.forEach((data, idx) => {
+            //     this.addRaster(data, idx)
+            // })
         }
     }
 
@@ -97,21 +105,39 @@ export class MapBoxViewer extends Component {
         });
     }
 
-    plotPlumesMarker = (features) => {
-        const uniqueLocationsSet = new Set();
-        features.forEach(feature => {
-            const { bbox } = feature;
-            const lon = bbox[0];
-            const lat = bbox[1];
-            const coordinate = [lon, lat];
-            if (!uniqueLocationsSet.has(JSON.stringify(coordinate))) {
-                uniqueLocationsSet.add(JSON.stringify(coordinate));
-            }
-        });
-        const uniqueLocations = Array.from(uniqueLocationsSet).map(coordinateStr => JSON.parse(coordinateStr));
+    plotPlumesMarker = (plots) => {
+        plots.forEach((plot) => {
+            const { plumeId, data, location, region } = plot;
+            const [ lon, lat ] = location;
+            const marker = this.addMarker(this.state.currentViewer, lon, lat);
+            marker.getElement().addEventListener("click", (e) => {
+                //1. clear previous added Plume Layer
+                this.state.addedPlumeLayer.forEach((layerId) => {
+                    // remove layer
+                    this.state.currentViewer.removeLayer(layerId);
+                })
+                this.state.addedPlumeSource.forEach((sourceId) => {
+                    // remove source
+                    this.state.currentViewer.removeSource(sourceId);
+                })
+                
+                // get the first element of the plot
+                // 2. render it.
+                this.addRaster(data, data.id);
+                
+                // 3. zoom in
+                this.state.currentViewer.flyTo({
+                    center: [lon, lat], // Replace with the desired latitude and longitude
+                    zoom: 6,
+                });
 
-        uniqueLocations.forEach(([lon, lat]) => {
-            this.addMarker(this.state.currentViewer, lon, lat)
+                // 4. update the state
+                this.setState({ selectedPlumeId: plumeId, addedPlumeLayer: [], addedPlumeSource: [], selectedRegion: region});
+                // when rendered, also showcase the playbutton.
+                // play functionality will take in currently clicked plume,
+                // it will take in the get the list of plumes from the dataTree
+                // then it will play it in 5 seconds gap
+            });
         });
     }
 
@@ -121,6 +147,7 @@ export class MapBoxViewer extends Component {
         let VMIN = 0;
         let VMAX = 0.2;
         let colorMap = "magma";
+        let itemId = feature.id;
 
         // if (this.props.metaData) {
         //  // TODO: there is a problem here.
@@ -131,9 +158,13 @@ export class MapBoxViewer extends Component {
         //     VMAX = vmax;
         // }
 
+        // first remove previous layer
+        if (this.currentLayerId) this.state.currentViewer.removeLayer(this.currentLayerId);
+        if (this.currentSourceId) this.state.currentViewer.removeSource(this.currentSourceId);
+
         const TILE_URL =
             `${process.env.REACT_APP_RASTER_API_URL}/collections/${collection}/tiles/WebMercatorQuad/{z}/{x}/{y}@1x` +
-            "?item=" +
+            "?item=" + itemId +
             "&assets=" +
             assets +
             "&bidx=1" +
@@ -159,6 +190,14 @@ export class MapBoxViewer extends Component {
             source: rasterSourceId,
             paint: {},
         });
+
+        this.currentLayerId = layerId;
+        this.currentSourceId = rasterSourceId;
+        // reference to later clean them up
+        this.setState((prevState, props) => ({
+            addedPlumeLayer: [...prevState.addedPlumeLayer, layerId],
+            addedPlumeSource: [...prevState.addedPlumeSource, rasterSourceId]
+        }));
     }
 
     // helper
@@ -179,6 +218,26 @@ export class MapBoxViewer extends Component {
         return el;
     }
 
+    handleAnimate = () => {
+        const { dataTree } = this.props;
+        const { selectedPlumeId, selectedRegion } = this.state;
+        const allPlumes = dataTree[selectedRegion][selectedPlumeId];
+        console.log("}}}}}}}}}ALL PLUMES{{{{{{{{{{{{{{")
+        console.log(allPlumes)
+
+        let index = 0;  // Initialize index to start from the first element
+
+        const intervalId = setInterval(() => {
+            console.log(allPlumes[index]);  // Print the current element
+            this.addRaster(allPlumes[index], "slideshow"+index)
+            index++;  // Move to the next element
+            
+            if (index >= allPlumes.length) {
+                clearInterval(intervalId);  // Stop the interval when we've printed all elements
+            }
+        }, 5000);  // 5000 milliseconds = 5 seconds
+    }
+
     render() {
         return (
             <Box component="main" className="map-section fullSize" sx={{ flexGrow: 1 }} style={this.props.style}>
@@ -187,6 +246,9 @@ export class MapBoxViewer extends Component {
                         <div id="mapbox-container" className='fullSize' style={{ position: "absolute" }}></div>
                     </Grid>
                 </Grid>
+                <div style={{position: "absolute", top: "20px", left: "20px", zIndex:"9999"}}>
+                    { this.state.selectedPlumeId && <Button variant="contained" onClick={this.handleAnimate}>Animate</Button> }
+                </div>
             </Box>
         );    
     }

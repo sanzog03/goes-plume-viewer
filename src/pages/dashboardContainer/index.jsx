@@ -8,7 +8,7 @@ export function DashboardContainer() {
     // get the query params
     const [ searchParams ] = useSearchParams();
     const [ zoomLevel ] = useState (searchParams.get('zoom-level')); // let default zoom level controlled by map component
-    const [ collectionId ] = useState(searchParams.get("collection-id") || "goes-ch4");
+    const [ collectionId ] = useState(searchParams.get("collection-id") || "goes-ch4-2");
 
     const [ collectionItems, setCollectionItems ] = useState([]);
     const [ collectionMeta, setCollectionMeta ] = useState({});
