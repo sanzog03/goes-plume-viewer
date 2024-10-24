@@ -122,11 +122,14 @@ export class MapBoxViewer extends Component {
         let VMAX = 0.2;
         let colorMap = "magma";
 
-        if (this.props.metaData) {
-            const { colormap_name, rescale } = this.props.metaData.renders[`${assets}`]
-            colorMap = colormap_name;
-            [ VMIN, VMAX ] = rescale;
-        }
+        // if (this.props.metaData) {
+        //  // TODO: there is a problem here.
+        //     const { colormap_name, rescale } = this.props.metaData.renders[`${assets}`]
+        //     colorMap = colormap_name;
+        //     let [ vmin, vmax ] = rescale;
+        //     VMIN = vmin;
+        //     VMAX = vmax;
+        // }
 
         const TILE_URL =
             `${process.env.REACT_APP_RASTER_API_URL}/collections/${collection}/tiles/WebMercatorQuad/{z}/{x}/{y}@1x` +
