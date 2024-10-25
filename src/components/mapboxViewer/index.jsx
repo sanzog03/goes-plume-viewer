@@ -157,11 +157,6 @@ export class MapBoxViewer extends Component {
         //     VMIN = vmin;
         //     VMAX = vmax;
         // }
-
-        // first remove previous layer
-        if (this.currentLayerId) this.state.currentViewer.removeLayer(this.currentLayerId);
-        if (this.currentSourceId) this.state.currentViewer.removeSource(this.currentSourceId);
-
         const TILE_URL =
             `${process.env.REACT_APP_RASTER_API_URL}/collections/${collection}/tiles/WebMercatorQuad/{z}/{x}/{y}@1x` +
             "?item=" + itemId +
@@ -218,7 +213,46 @@ export class MapBoxViewer extends Component {
         return el;
     }
 
+    clearPreviousLayersAndSources = () => {
+        if (this.currentLayerId) {
+            try {
+                this.state.currentViewer.removeLayer(this.currentLayerId);
+                this.currentLayerId = null;    
+            } catch (e) {
+                console.error(e)
+            }
+        }
+        if (this.currentSourceId) {
+            try {
+                this.state.currentViewer.removeSource(this.currentSourceId);
+                this.currentSourceId = null;    
+            } catch (e) {
+                console.error(e)
+            }
+        }
+        if (this.state.addedPlumeLayer) {
+            this.state.addedPlumeLayer.forEach(layer => {
+                try {
+                    this.state.currentViewer.removeLayer(layer);
+                } catch (e) {
+                    console.error(e)
+                }
+            });
+        } 
+        if (this.state.addedPlumeSource) {
+            this.state.addedPlumeSource.forEach(source => {
+                try {
+                    this.state.currentViewer.removeSource(source);                    
+                } catch (e) {
+                    console.error(e)
+                }
+            });
+        }
+        this.setState({ addedPlumeLayer: [], addedPlumeSource: [] });
+    }
+
     handleAnimate = () => {
+        this.clearPreviousLayersAndSources();
         const { dataTree } = this.props;
         const { selectedPlumeId, selectedRegion } = this.state;
         const allPlumes = dataTree[selectedRegion][selectedPlumeId];
@@ -228,6 +262,10 @@ export class MapBoxViewer extends Component {
         let index = 0;  // Initialize index to start from the first element
 
         const intervalId = setInterval(() => {
+            // first remove previous layer
+            if (this.currentLayerId) this.state.currentViewer.removeLayer(this.currentLayerId);
+            if (this.currentSourceId) this.state.currentViewer.removeSource(this.currentSourceId);
+
             console.log(allPlumes[index]);  // Print the current element
             this.addRaster(allPlumes[index], "slideshow"+index)
             index++;  // Move to the next element
@@ -236,6 +274,21 @@ export class MapBoxViewer extends Component {
                 clearInterval(intervalId);  // Stop the interval when we've printed all elements
             }
         }, 5000);  // 5000 milliseconds = 5 seconds
+    }
+
+   handleViewAll = () => {
+        this.clearPreviousLayersAndSources();
+        const { dataTree } = this.props;
+        const { selectedPlumeId, selectedRegion } = this.state;
+        const allPlumes = dataTree[selectedRegion][selectedPlumeId];
+        console.log("}}}}}}}}}ALL PLUMES{{{{{{{{{{{{{{")
+        console.log(allPlumes)
+
+        let index = 0;  // Initialize index to start from the first element
+
+        allPlumes.forEach((plume, idx) => {
+            this.addRaster(plume, "viewall"+idx)
+        });
     }
 
     render() {
@@ -248,6 +301,9 @@ export class MapBoxViewer extends Component {
                 </Grid>
                 <div style={{position: "absolute", top: "20px", left: "20px", zIndex:"9999"}}>
                     { this.state.selectedPlumeId && <Button variant="contained" onClick={this.handleAnimate}>Animate</Button> }
+                </div>
+                <div style={{position: "absolute", top: "70px", left: "20px", zIndex:"9999"}}>
+                    { this.state.selectedPlumeId && <Button variant="contained" onClick={this.handleViewAll}>View All</Button> }
                 </div>
             </Box>
         );    
