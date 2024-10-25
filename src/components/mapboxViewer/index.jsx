@@ -112,15 +112,7 @@ export class MapBoxViewer extends Component {
             const marker = this.addMarker(this.state.currentViewer, lon, lat);
             marker.getElement().addEventListener("click", (e) => {
                 //1. clear previous added Plume Layer
-                this.state.addedPlumeLayer.forEach((layerId) => {
-                    // remove layer
-                    this.state.currentViewer.removeLayer(layerId);
-                })
-                this.state.addedPlumeSource.forEach((sourceId) => {
-                    // remove source
-                    this.state.currentViewer.removeSource(sourceId);
-                })
-                
+                this.clearPreviousLayersAndSources();
                 // get the first element of the plot
                 // 2. render it.
                 this.addRaster(data, data.id);
