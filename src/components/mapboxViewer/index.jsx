@@ -133,6 +133,30 @@ export class MapBoxViewer extends Component {
         });
     }
 
+    getTileUrl(feature) {
+        const collection = "goes-ch4"; // feature.collection
+        const assets = "rad"; // first element in the asset json object. i.e. Object.keys(features.assets)[0]
+        let VMIN = 0;
+        let VMAX = 0.2;
+        let colorMap = "magma";
+        let itemId = feature.id;
+
+        const TILE_URL =
+            `${process.env.REACT_APP_RASTER_API_URL}/collections/${collection}/tiles/WebMercatorQuad/{z}/{x}/{y}@1x` +
+            "?item=" + itemId +
+            "&assets=" +
+            assets +
+            "&bidx=1" +
+            "&colormap_name=" + colorMap +
+            "&rescale=" +
+            VMIN +
+            "%2C" +
+            VMAX +
+            "&nodata=-9999";
+
+        return TILE_URL;
+    }
+
     addRaster(feature, uniqueId) {
         const collection = "goes-ch4"; // feature.collection
         const assets = "rad"; // first element in the asset json object. i.e. Object.keys(features.assets)[0]
@@ -175,7 +199,7 @@ export class MapBoxViewer extends Component {
             id: layerId,
             type: "raster",
             source: rasterSourceId,
-            paint: {},
+            paint: { "raster-opacity" : 0 },
         });
 
         this.currentLayerId = layerId;
@@ -243,8 +267,56 @@ export class MapBoxViewer extends Component {
         this.setState({ addedPlumeLayer: [], addedPlumeSource: [] });
     }
 
+    transitionLayers = (map, prevLayerId, currentLayerId) => {
+        console.log("TRANSITIONING!!!", prevLayerId, " v ", currentLayerId)
+        // Fade out the prev layer
+        if (prevLayerId) {
+            map.setPaintProperty(prevLayerId, 'raster-opacity', 0,
+                //  { transition: { duration: 1000 } }
+                );
+         console.log("prev >> ", map.getLayer(prevLayerId))
+        }
+      
+        // Fade in the current layer
+        if (currentLayerId) {
+            map.setPaintProperty(currentLayerId, 'raster-opacity', 1, 
+                // { transition: { duration: 1000 } }
+            );
+            console.log("curr >> ", map.getLayer(currentLayerId))
+        }
+
+        // check it afterwards
+
+      }
+
+    handleAnimate2 = () => {
+        const { dataTree } = this.props;
+        const { selectedPlumeId, selectedRegion } = this.state;
+        const allPlumes = dataTree[selectedRegion][selectedPlumeId];
+        // first load all the plumes
+        allPlumes.forEach((plumes, idx) => {
+            this.addRaster(plumes, idx)
+        });
+
+        let map = this.state.currentViewer;
+
+        let index = 1;  // Initialize index to start from the first element
+        const intervalId = setInterval(() => {
+            
+            let currentLayerId = "raster-layer-" + index;
+            let prevLayerId = "raster-layer-" + (index-1);
+            console.log(" pre-TRANSITIONING!!!")
+
+            this.transitionLayers(map, prevLayerId, currentLayerId);
+            index += 1
+            if (index-1 >= allPlumes.length) {
+                clearInterval(intervalId);  // Stop the interval when we've printed all elements
+            }
+        }, 1000);
+    }
+
     handleAnimate = () => {
-        this.clearPreviousLayersAndSources();
+        // this.clearPreviousLayersAndSources();
         const { dataTree } = this.props;
         const { selectedPlumeId, selectedRegion } = this.state;
         const allPlumes = dataTree[selectedRegion][selectedPlumeId];
@@ -253,13 +325,26 @@ export class MapBoxViewer extends Component {
 
         let index = 0;  // Initialize index to start from the first element
 
+        let map = this.state.currentViewer;
+        let sourceId = this.currentSourceId;
+
         const intervalId = setInterval(() => {
             // first remove previous layer
-            if (this.currentLayerId) this.state.currentViewer.removeLayer(this.currentLayerId);
-            if (this.currentSourceId) this.state.currentViewer.removeSource(this.currentSourceId);
+            // if (this.currentLayerId) this.state.currentViewer.removeLayer(this.currentLayerId);
+            // if (this.currentSourceId) this.state.currentViewer.removeSource(this.currentSourceId);
 
             console.log(allPlumes[index]);  // Print the current element
-            this.addRaster(allPlumes[index], "slideshow"+index)
+            // this.addRaster(allPlumes[index], "slideshow"+index)
+            // instead of adding a whole new raster and layer, just change the picture
+            // let newImageUrl = allPlumes[index]["assets"]["rad"]["href"]
+            let newTileURL = this.getTileUrl(allPlumes[index])
+
+            let source = map.getSource(sourceId);
+            if (source) {
+                source.setTiles([newTileURL]);
+            }
+
+
             index++;  // Move to the next element
             
             if (index >= allPlumes.length) {
@@ -292,7 +377,7 @@ export class MapBoxViewer extends Component {
                     </Grid>
                 </Grid>
                 <div style={{position: "absolute", top: "20px", left: "20px", zIndex:"9999"}}>
-                    { this.state.selectedPlumeId && <Button variant="contained" onClick={this.handleAnimate}>Animate</Button> }
+                    { this.state.selectedPlumeId && <Button variant="contained" onClick={this.handleAnimate2}>Animate</Button> }
                 </div>
                 <div style={{position: "absolute", top: "70px", left: "20px", zIndex:"9999"}}>
                     { this.state.selectedPlumeId && <Button variant="contained" onClick={this.handleViewAll}>View All</Button> }
