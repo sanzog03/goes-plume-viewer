@@ -17,7 +17,11 @@ export const MarkerFeature = ({ plots, setSelectedPlume }) => {
             const marker = addMarker(map, lon, lat);
             const mel = marker.getElement();
             mel.addEventListener("click", (e) => {
-                setSelectedPlume(plot.plumeId);
+                setSelectedPlume(plot);
+                map.flyTo({
+                    center: [lon, lat], // Replace with the desired latitude and longitude
+                    zoom: 6,
+                });
             });
         });
     }, [plots]);
@@ -30,8 +34,6 @@ const addMarker = (map, longitude, latitude) => {
     el.className = 'marker';
     const markerColor = "#fcbb46";
     el.innerHTML = getMarkerSVG(markerColor);
-
-    console.log(longitude)
     let marker = new mapboxgl.Marker(el)
         .setLngLat([longitude, latitude])
         .addTo(map);

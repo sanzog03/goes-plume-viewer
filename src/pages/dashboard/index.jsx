@@ -2,7 +2,9 @@ import React, { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 
 import MainMap from '../../components/mainMap';
-import { MarkerFeature } from '../../components/mapMarker'; 
+import { MarkerFeature } from '../../components/mapMarker';
+import { MapLayer } from '../../components/mapLayer';
+
 import { getPlotsItems } from './helper';
 
 import "./index.css";
@@ -22,6 +24,7 @@ export function Dashboard({ dataTree, metaData, zoomLevel }) {
       <div id="dashboard-map-container">
         <MainMap>
             <MarkerFeature plots={plots} setSelectedPlume={setSelectedPlume}></MarkerFeature>
+            <MapLayer plume={selectedPlume}></MapLayer>
         </MainMap>
       </div>
     </Box>
