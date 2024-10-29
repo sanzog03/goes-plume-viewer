@@ -16,13 +16,18 @@ export function dataTransformation(data) {
         const [ _, region, plumeId, __ ] = destructuredId;
 
         // build tree
-        if (!(region in dataTree)) {
-            dataTree[region] = {};
+        // if (!(region in dataTree)) {
+        //     dataTree[region] = {};
+        // }
+        // if (!(plumeId in dataTree[region])) {
+        //     dataTree[region][plumeId] = [];
+        // }
+        // dataTree[region][plumeId].push(item);
+
+        if (!(plumeId in dataTree)) {
+            dataTree[plumeId] = [];
         }
-        if (!(plumeId in dataTree[region])) {
-            dataTree[region][plumeId] = [];
-        }
-        dataTree[region][plumeId].push(item);
+        dataTree[plumeId].push(item);
     });
 
     return dataTree;
