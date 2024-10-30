@@ -15,16 +15,12 @@ export function Dashboard({ dataTree, metaData, zoomLevel }) {
   const [ plots, setPlots ] = useState([]);
   const [ plumesForAnimation, setPlumesForAnimation ] = useState([]);
 
-  console.log("dtree", dataTree);
-  console.log("selPlume", selectedPlume)
-
   const handleSelectedPlume = (plume) => {
     setSelectedPlume(plume);
     setPlumesForAnimation(dataTree[plume.plumeId])
   }
 
   useEffect(() => {
-    console.log(dataTree)
     const plots = getPlotsItems(dataTree);
     setPlots(plots)
   }, [dataTree]);

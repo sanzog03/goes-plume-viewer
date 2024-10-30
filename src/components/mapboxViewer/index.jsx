@@ -58,7 +58,6 @@ export class MapBoxViewer extends Component {
         map.on('zoomend', () => {
             const zoomLevel = map.getZoom();
             const bounds = map.getBounds();
-            console.log("zoomed in ~~~~~>", zoomLevel, " x ", bounds);
 
             if (zoomLevel > 6.8) {
                 // find the rasters that falls inside the bounds
@@ -320,8 +319,6 @@ export class MapBoxViewer extends Component {
         const { dataTree } = this.props;
         const { selectedPlumeId, selectedRegion } = this.state;
         const allPlumes = dataTree[selectedRegion][selectedPlumeId];
-        console.log("}}}}}}}}}ALL PLUMES{{{{{{{{{{{{{{")
-        console.log(allPlumes)
 
         let index = 0;  // Initialize index to start from the first element
 
@@ -358,8 +355,6 @@ export class MapBoxViewer extends Component {
         const { dataTree } = this.props;
         const { selectedPlumeId, selectedRegion } = this.state;
         const allPlumes = dataTree[selectedRegion][selectedPlumeId];
-        console.log("}}}}}}}}}ALL PLUMES{{{{{{{{{{{{{{")
-        console.log(allPlumes)
 
         let index = 0;  // Initialize index to start from the first element
 
