@@ -3,31 +3,34 @@ import { useMapbox } from "../../context/mapContext";
 
 export const MapLayer = ({ plume }) => {
     const { map } = useMapbox();
-    const [ prevLayerId, setPrevLayerId ] = useState();
-    const [ prevSourceId, setPrevSourceId ] = useState();
 
     useEffect(() => {
         if (!map || !plume) return;
-        
-        if (prevLayerId) map.removeLayer(prevLayerId);
-        if (prevSourceId) map.removeSource(prevSourceId);
 
         const features = plume.data;
-        const uid = plume.plumeId;
-        const sourceId = "raster-source-" + uid;
-        const layerId = "raster-layer-" + uid;
-
-        setPrevSourceId(sourceId);
-        setPrevLayerId(layerId);
+        // first one is the representing tiff among subdaily
+        const sourceId = getSourceId(0);
+        const layerId = getLayerId(0);
         addRaster(map, features, sourceId, layerId);
 
-        return () => { 
-            map.removeLayer(layerId);
-            map.removeLayer(sourceId);
+        return () => {
+            // cleanups
+            if (map) {
+                map.removeLayer(layerId);
+                map.removeSource(sourceId);   
+            }
         }
     }, [plume]);
 
     return null;
+}
+
+const getSourceId = (idx) => {
+    return "raster-source-" + idx;
+} 
+
+const getLayerId = (idx) => {
+    return "raster-layer-" + idx;
 }
 
 function addRaster(map, feature, sourceId, layerId) {
