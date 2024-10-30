@@ -23,14 +23,9 @@ export const PlumeAnimation = ({ plumes }) => {
             plumeDateIdxMap[momentFormattedDatetimeStr] = idx;
         });
 
-        console.log(plumeDateIdxMap)
-
         // bufferedLayer to hold the layers and soruces that are already bufferedLayer
         const bufferedLayer = new Set();
         const bufferedSource = new Set();
-        // always setup when marker is clicked by mapLayer component
-        // bufferedLayer.add(getLayerId(0));
-        // bufferedSource.add(getSourceId(0));
 
         let startDatetime = plumes[0]["properties"]["datetime"];
         let endDatetime = plumes[plumes.length - 1]["properties"]["datetime"];
@@ -56,9 +51,7 @@ export const PlumeAnimation = ({ plumes }) => {
             bufferedSource.forEach(source => { if (sourceExists(map, source)) map.removeSource(source) });
             bufferedLayer.clear();
             bufferedSource.clear();
-            prev = getLayerId(0); // always setup when marker is clicked by mapLayer component
-            // bufferedLayer.add(getLayerId(0));
-            // bufferedSource.add(getSourceId(0));
+            prev = null;
             if (map && timeline) {
                 map.removeControl(timeline.current);
             }
@@ -71,27 +64,24 @@ export const PlumeAnimation = ({ plumes }) => {
     );
 }
 
+let prev=null;
+
 const handleAnimation = (map, date, plumeDateIdxMap, plumes, bufferedLayer, bufferedSource) => {
     const momentFormattedDatetimeStr = moment(date).format();
     if (!(momentFormattedDatetimeStr in plumeDateIdxMap)) return;
 
     const index = plumeDateIdxMap[momentFormattedDatetimeStr];
     console.log("index:", index);
-    bufferAndTransition(map, plumes, index, bufferedLayer, bufferedSource);
-}
 
-let prev=getLayerId(0); // always setup when marker is clicked by mapLayer component
-
-const bufferAndTransition = (map, plumes, index, bufferedLayer, bufferedSource) => {
-    // get the plume.
-    // buffer the following k elements. // TODO
+    // buffer the following k elements.
     const k = 4;
     bufferSourceLayers(map, plumes, index, k, bufferedLayer, bufferedSource);
-    // display the plume.
+
+    // display the indexed plume.
     const prevLayerId = prev;
     const currentLayerId = getLayerId(index);
-    prev = currentLayerId;
     transitionLayers(map, prevLayerId, currentLayerId);
+    prev = currentLayerId;
 }
 
 const bufferSourceLayers = (map, plumes, index, k, bufferedLayer, bufferedSource) => {
@@ -115,13 +105,15 @@ const bufferSourceLayers = (map, plumes, index, k, bufferedLayer, bufferedSource
 }
 
 const transitionLayers = (map, prevLayerId, currentLayerId) => {
-    // Fade out the prev layer
-    if (prevLayerId) {
-        map.setLayoutProperty(prevLayerId, 'visibility', 'none');
-    }
-
     // Fade in the current layer
-    if (currentLayerId) {
-        map.setLayoutProperty(prevLayerId, 'visibility', 'visible');
-    }
+    if (currentLayerId) map.setLayoutProperty(currentLayerId, 'visibility', 'visible');
+
+    // Note: for a smooth transition we need to first display the new layer when there exist a old layer.
+    // Else there will be flicker between transition.
+
+    // Because of timeout, there is a lag on the rewind. TODO: find a better solution.
+    setTimeout(() => {
+        // Fade out the prev layer
+        if (prevLayerId) map.setLayoutProperty(prevLayerId, 'visibility', 'none');
+    }, 900);
 }

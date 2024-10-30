@@ -30,8 +30,7 @@ export const addSourceLayerToMap = (map, feature, sourceId, layerId) => {
         layout: {
             visibility: 'none'  // Set the layer to be hidden initially
         },
-        paint: { },
-        // paint: { "raster-opacity" : 0 },
+        paint: { }
     });
 }
 
