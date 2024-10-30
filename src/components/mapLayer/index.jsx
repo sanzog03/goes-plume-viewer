@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useMapbox } from "../../context/mapContext";
-import { addSourceLayerToMap, getSourceId, getLayerId } from "../../utils";
+import { addSourceLayerToMap, getSourceId, getLayerId, layerExists, sourceExists } from "../../utils";
 
 export const MapLayer = ({ plume }) => {
     const { map } = useMapbox();
@@ -25,12 +25,4 @@ export const MapLayer = ({ plume }) => {
     }, [plume]);
 
     return null;
-}
-
-function layerExists(map, layerId) {
-    return !!map.getLayer(layerId);
-}
-
-function sourceExists(map, sourceId) {
-    return !!map.getSource(sourceId);
 }

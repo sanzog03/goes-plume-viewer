@@ -1,4 +1,6 @@
 export const addSourceLayerToMap = (map, feature, sourceId, layerId) => {
+    if (!map || (sourceExists(map, sourceId) && layerExists(map, layerId))) return;
+
     const collection = "goes-ch4-2"; // feature.collection
     const assets = "rad"; // first element in the asset json object. i.e. Object.keys(features.assets)[0]
     let VMIN = 0;
@@ -39,4 +41,12 @@ export const getSourceId = (idx) => {
 
 export const getLayerId = (idx) => {
     return "raster-layer-" + idx;
+}
+
+export function layerExists(map, layerId) {
+    return !!map.getLayer(layerId);
+}
+
+export function sourceExists(map, sourceId) {
+    return !!map.getSource(sourceId);
 }

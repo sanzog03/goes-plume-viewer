@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import { useMapbox } from "../../context/mapContext";
 import TimelineControl from "mapboxgl-timeline";
 import moment from "moment";
-import { addSourceLayerToMap as bufferSourceLayer, getSourceId, getLayerId } from "../../utils";
+import { addSourceLayerToMap as bufferSourceLayer, getSourceId, getLayerId, layerExists, sourceExists } from "../../utils";
 
 import 'mapboxgl-timeline/dist/style.css';
 import "./index.css";
@@ -13,7 +13,7 @@ export const PlumeAnimation = ({ plumes }) => {
     const timeline = useRef(null);
 
     useEffect(() => {
-        if ((!map && timeline) || !plumes.length) return;
+        if (!map || !plumes.length) return;
 
         // hashmap so we could refer the index and do manipulations with respect to the index.
         const plumeDateIdxMap = {}
@@ -22,6 +22,8 @@ export const PlumeAnimation = ({ plumes }) => {
             const momentFormattedDatetimeStr = moment(datetime).format();
             plumeDateIdxMap[momentFormattedDatetimeStr] = idx;
         });
+
+        console.log(plumeDateIdxMap)
 
         // bufferedLayer to hold the layers and soruces that are already bufferedLayer
         const bufferedLayer = new Set();
@@ -35,37 +37,23 @@ export const PlumeAnimation = ({ plumes }) => {
         timeline.current = new TimelineControl({
             start: startDatetime,
             end: endDatetime,
-            step: 1000 * 60, //miliseconds
+            initial: startDatetime,
+            step: 1000 * 60 * 5, //miliseconds
+            onStart: (date) => {
+                // executed on initial step tick.
+                handleAnimation(map, date, plumeDateIdxMap, plumes, bufferedLayer, bufferedSource);
+            },
             onChange: date => {
-                // executed on each step tick.
-                const momentFormattedDatetimeStr = moment(date).format();
-                if (!(momentFormattedDatetimeStr in plumeDateIdxMap)) return;
-
-                const index = plumeDateIdxMap[momentFormattedDatetimeStr];
-                handleAnimation(map, plumes, index, bufferedLayer, bufferedSource);
-                
-                const layers = map.getStyle().layers;
-                layers.forEach(layer => {
-                const visibility = map.getLayoutProperty(layer.id, 'visibility');
-                if (visibility === 'visible' || visibility === undefined) {
-                        console.log("visible layer is: ", layer)
-                    }
-                });
+                // executed on each changed step tick.
+                handleAnimation(map, date, plumeDateIdxMap, plumes, bufferedLayer, bufferedSource);
             }
         });
         map.addControl(timeline.current, "top-left");
 
         return () => {
             // cleanups
-            if (map) {
-                try {
-                    bufferedLayer.forEach(layer => map.removeLayer(layer));
-                    bufferedSource.forEach(source => map.removeSource(source));
-                } catch(e) {
-                    console.log(e, "later on donot overlap the implementation")
-                    // make the animation clear this thing and then work on its own from the first one.
-                }
-            }
+            bufferedLayer.forEach(layer => { if (layerExists(map, layer)) map.removeLayer(layer) });
+            bufferedSource.forEach(source => { if (sourceExists(map, source)) map.removeSource(source) });
             bufferedLayer.clear();
             bufferedSource.clear();
             prev = getLayerId(0); // always setup when marker is clicked by mapLayer component
@@ -83,9 +71,18 @@ export const PlumeAnimation = ({ plumes }) => {
     );
 }
 
+const handleAnimation = (map, date, plumeDateIdxMap, plumes, bufferedLayer, bufferedSource) => {
+    const momentFormattedDatetimeStr = moment(date).format();
+    if (!(momentFormattedDatetimeStr in plumeDateIdxMap)) return;
+
+    const index = plumeDateIdxMap[momentFormattedDatetimeStr];
+    console.log("index:", index);
+    bufferAndTransition(map, plumes, index, bufferedLayer, bufferedSource);
+}
+
 let prev=getLayerId(0); // always setup when marker is clicked by mapLayer component
 
-const handleAnimation = (map, plumes, index, bufferedLayer, bufferedSource) => {
+const bufferAndTransition = (map, plumes, index, bufferedLayer, bufferedSource) => {
     // get the plume.
     // buffer the following k elements. // TODO
     const k = 4;
@@ -122,9 +119,9 @@ const transitionLayers = (map, prevLayerId, currentLayerId) => {
     if (prevLayerId) {
         map.setLayoutProperty(prevLayerId, 'visibility', 'none');
     }
-  
+
     // Fade in the current layer
     if (currentLayerId) {
         map.setLayoutProperty(prevLayerId, 'visibility', 'visible');
     }
-  }
+}
