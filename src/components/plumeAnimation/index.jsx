@@ -25,6 +25,9 @@ export const PlumeAnimation = ({ plumes }) => {
         // bufferedLayer to hold the layers and soruces that are already bufferedLayer
         const bufferedLayer = new Set();
         const bufferedSource = new Set();
+        // always setup when marker is clicked by mapLayer component
+        bufferedLayer.add(getLayerId(0));
+        bufferedSource.add(getSourceId(0));
 
         let startDatetime = plumes[0]["properties"]["datetime"];
         let endDatetime = plumes[plumes.length - 1]["properties"]["datetime"];
@@ -38,7 +41,6 @@ export const PlumeAnimation = ({ plumes }) => {
                 if (!(momentFormattedDatetimeStr in plumeDateIdxMap)) return;
 
                 const index = plumeDateIdxMap[momentFormattedDatetimeStr];
-                console.log("bufferedLayer", bufferedLayer);
                 handleAnimation(map, plumes, index, bufferedLayer, bufferedSource);
             }
         });
@@ -52,7 +54,9 @@ export const PlumeAnimation = ({ plumes }) => {
             }
             bufferedLayer.clear();
             bufferedSource.clear();
-            prev = "raster-layer-0"; // always setup when marker is clicked by mapLayer component
+            prev = getLayerId(0); // always setup when marker is clicked by mapLayer component
+            bufferedLayer.add(getLayerId(0));
+            bufferedSource.add(getSourceId(0));
             if (map && timeline) {
                 map.removeControl(timeline.current);
             }
@@ -73,7 +77,7 @@ const getLayerId = (idx) => {
     return "raster-layer-" + idx;
 }
 
-let prev="raster-layer-0"; // always setup when marker is clicked by mapLayer component
+let prev=getLayerId(0); // always setup when marker is clicked by mapLayer component
 
 const handleAnimation = (map, plumes, index, bufferedLayer, bufferedSource) => {
     // get the plume.
@@ -88,7 +92,15 @@ const handleAnimation = (map, plumes, index, bufferedLayer, bufferedSource) => {
 }
 
 const bufferSourceLayers = (map, plumes, index, k, bufferedLayer, bufferedSource) => {
-    for (let i=index; i<index+k; i++){
+    let start = index;
+    let limit = index + k;
+    if (start >= (plumes.length - 1)) {
+        return
+    }
+    if (limit >= plumes.length) {
+        limit = plumes.length;
+    }
+    for (let i=start; i<limit; i++){
         let sourceId = getSourceId(i);
         let layerId = getLayerId(i);
         if (!bufferedLayer.has(layerId)) {
@@ -137,7 +149,6 @@ const bufferSourceLayer = (map, feature, sourceId, layerId) => {
 
 
 const transitionLayers = (map, prevLayerId, currentLayerId) => {
-    console.log("TRANSITIONING!!!", prevLayerId, " v ", currentLayerId)
     // Fade out the prev layer
     if (prevLayerId) {
         map.setPaintProperty(
@@ -153,7 +164,7 @@ const transitionLayers = (map, prevLayerId, currentLayerId) => {
         map.setPaintProperty(
             currentLayerId,
             'raster-opacity',
-            1, 
+            1,
             // { transition: { duration: 1000 } }
         );
     }
