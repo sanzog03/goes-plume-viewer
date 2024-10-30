@@ -26,8 +26,8 @@ export const PlumeAnimation = ({ plumes }) => {
         const bufferedLayer = new Set();
         const bufferedSource = new Set();
         // always setup when marker is clicked by mapLayer component
-        bufferedLayer.add(getLayerId(0));
-        bufferedSource.add(getSourceId(0));
+        // bufferedLayer.add(getLayerId(0));
+        // bufferedSource.add(getSourceId(0));
 
         let startDatetime = plumes[0]["properties"]["datetime"];
         let endDatetime = plumes[plumes.length - 1]["properties"]["datetime"];
@@ -49,14 +49,19 @@ export const PlumeAnimation = ({ plumes }) => {
         return () => {
             // cleanups
             if (map) {
-                bufferedLayer.forEach(layer => map.removeLayer(layer));
-                bufferedSource.forEach(source => map.removeSource(source));
+                try {
+                    bufferedLayer.forEach(layer => map.removeLayer(layer));
+                    bufferedSource.forEach(source => map.removeSource(source));
+                } catch(e) {
+                    console.log(e, "later on donot overlap the implementation")
+                    // make the animation clear this thing and then work on its own from the first one.
+                }
             }
             bufferedLayer.clear();
             bufferedSource.clear();
             prev = getLayerId(0); // always setup when marker is clicked by mapLayer component
-            bufferedLayer.add(getLayerId(0));
-            bufferedSource.add(getSourceId(0));
+            // bufferedLayer.add(getLayerId(0));
+            // bufferedSource.add(getSourceId(0));
             if (map && timeline) {
                 map.removeControl(timeline.current);
             }

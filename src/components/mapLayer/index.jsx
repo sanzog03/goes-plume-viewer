@@ -16,8 +16,13 @@ export const MapLayer = ({ plume }) => {
         return () => {
             // cleanups
             if (map) {
-                map.removeLayer(layerId);
-                map.removeSource(sourceId);   
+                try {
+                    map.removeLayer(layerId);
+                    map.removeSource(sourceId);
+                } catch(e) {
+                    console.log(e, "later on donot overlap the implementation")
+                    // make the animation clear this thing and then work on its own from the first one.
+                }
             }
         }
     }, [plume]);
