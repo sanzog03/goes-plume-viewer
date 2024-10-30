@@ -33,7 +33,7 @@ export const PlumeAnimation = ({ plumes }) => {
             start: startDatetime,
             end: endDatetime,
             initial: startDatetime,
-            step: 1000 * 60 * 5, //miliseconds
+            step: 1000 * 60 * 5, // 5 minute for GOES satellite; TODO: get this from the difference between the time of consecutive elements
             onStart: (date) => {
                 // executed on initial step tick.
                 handleAnimation(map, date, plumeDateIdxMap, plumes, bufferedLayer, bufferedSource);
@@ -102,6 +102,7 @@ const bufferSourceLayers = (map, plumes, index, k, bufferedLayer, bufferedSource
             if (!bufferedSource.has(sourceId)) bufferedSource.add(sourceId);
         }
     }
+    // TODO: for a very long plume list, we would want to remove the oldest buffered source and buffered layer for memory optimization.
 }
 
 const transitionLayers = (map, prevLayerId, currentLayerId) => {
@@ -110,10 +111,8 @@ const transitionLayers = (map, prevLayerId, currentLayerId) => {
 
     // Note: for a smooth transition we need to first display the new layer when there exist a old layer.
     // Else there will be flicker between transition.
-
-    // Because of timeout, there is a lag on the rewind. TODO: find a better solution.
     setTimeout(() => {
         // Fade out the prev layer
         if (prevLayerId) map.setLayoutProperty(prevLayerId, 'visibility', 'none');
-    }, 900);
+    }, 900); // Because of timeout, there is a lag on the rewind. TODO: find a better solution.
 }
