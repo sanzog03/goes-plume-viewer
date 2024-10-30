@@ -42,6 +42,14 @@ export const PlumeAnimation = ({ plumes }) => {
 
                 const index = plumeDateIdxMap[momentFormattedDatetimeStr];
                 handleAnimation(map, plumes, index, bufferedLayer, bufferedSource);
+                
+                const layers = map.getStyle().layers;
+                layers.forEach(layer => {
+                const visibility = map.getLayoutProperty(layer.id, 'visibility');
+                if (visibility === 'visible' || visibility === undefined) {
+                        console.log("visible layer is: ", layer)
+                    }
+                });
             }
         });
         map.addControl(timeline.current, "top-left");
@@ -148,7 +156,10 @@ const bufferSourceLayer = (map, feature, sourceId, layerId) => {
             id: layerId,
             type: "raster",
             source: sourceId,
-            paint: { "raster-opacity" : 0 },
+            layout: {
+                visibility: 'none'  // Set the layer to be hidden initially
+            },
+            // paint: { "raster-opacity" : 0 },
         });
     }
 
@@ -156,21 +167,23 @@ const bufferSourceLayer = (map, feature, sourceId, layerId) => {
 const transitionLayers = (map, prevLayerId, currentLayerId) => {
     // Fade out the prev layer
     if (prevLayerId) {
-        map.setPaintProperty(
-            prevLayerId,
-            'raster-opacity',
-            0,
-            //  { transition: { duration: 1000 } }
-        );
+        // map.setPaintProperty(
+        //     prevLayerId,
+        //     'raster-opacity',
+        //     0,
+        //     //  { transition: { duration: 1000 } }
+        // );
+        map.setLayoutProperty(prevLayerId, 'visibility', 'none');
     }
   
     // Fade in the current layer
     if (currentLayerId) {
-        map.setPaintProperty(
-            currentLayerId,
-            'raster-opacity',
-            1,
-            // { transition: { duration: 1000 } }
-        );
+        // map.setPaintProperty(
+        //     currentLayerId,
+        //     'raster-opacity',
+        //     1,
+        //     // { transition: { duration: 1000 } }
+        // );
+        map.setLayoutProperty(prevLayerId, 'visibility', 'visible');
     }
   }
