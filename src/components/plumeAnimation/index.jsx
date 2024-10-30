@@ -56,7 +56,7 @@ export const PlumeAnimation = ({ plumes }) => {
                 map.removeControl(timeline.current);
             }
         }
-    }, [plumes]);
+    }, [plumes, map]);
 
     return (
         <div className="plume-animation-controller-container">

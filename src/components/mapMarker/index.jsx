@@ -24,7 +24,7 @@ export const MarkerFeature = ({ plots, setSelectedPlume }) => {
                 });
             });
         });
-    }, [plots]);
+    }, [plots, map]);
 
     return null;
 }

@@ -22,7 +22,7 @@ export const MapLayer = ({ plume }) => {
                 if (sourceExists(map, sourceId)) map.removeSource(sourceId);
             }
         }
-    }, [plume]);
+    }, [plume, map]);
 
     return null;
 }

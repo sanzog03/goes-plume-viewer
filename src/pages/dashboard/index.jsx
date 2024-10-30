@@ -5,6 +5,8 @@ import MainMap from '../../components/mainMap';
 import { MarkerFeature } from '../../components/mapMarker';
 import { MapLayer } from '../../components/mapLayer';
 import { PlumeAnimation } from '../../components/plumeAnimation';
+import { MapControls } from "../../components/mapControls";
+import { PersistentDrawerRight } from "../../components/drawer";
 
 import { getPlotsItems } from './helper';
 
@@ -14,6 +16,7 @@ export function Dashboard({ dataTree, metaData, zoomLevel }) {
   const [ selectedPlume, setSelectedPlume ] = useState(null);
   const [ plots, setPlots ] = useState([]);
   const [ plumesForAnimation, setPlumesForAnimation ] = useState([]);
+  const [ openDrawer, setOpenDrawer ] = useState(false);
 
   const handleSelectedPlume = (plume) => {
     setSelectedPlume(plume);
@@ -32,7 +35,9 @@ export function Dashboard({ dataTree, metaData, zoomLevel }) {
             <MarkerFeature plots={plots} setSelectedPlume={handleSelectedPlume}></MarkerFeature>
             <MapLayer plume={selectedPlume}></MapLayer>
             <PlumeAnimation plumes={plumesForAnimation}/>
+            <MapControls onClickHamburger={() => setOpenDrawer(true)} />
         </MainMap>
+        <PersistentDrawerRight open={openDrawer} setOpen={setOpenDrawer}/>
       </div>
     </Box>
   );
