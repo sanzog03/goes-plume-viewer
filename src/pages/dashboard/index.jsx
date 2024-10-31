@@ -7,6 +7,7 @@ import { MapLayer } from '../../components/mapLayer';
 import { PlumeAnimation } from '../../components/plumeAnimation';
 import { MapControls } from "../../components/mapControls";
 import { PersistentDrawerRight } from "../../components/drawer";
+import { Title } from "../../components/title";
 
 import { getPlotsItems } from './helper';
 
@@ -31,6 +32,7 @@ export function Dashboard({ dataTree, metaData, zoomLevel }) {
   return (
     <Box className="fullSize">
       <div id="dashboard-map-container">
+        <Title/>
         <MainMap>
             <MarkerFeature plots={plots} setSelectedPlume={handleSelectedPlume} setOpenDrawer={setOpenDrawer}></MarkerFeature>
             <MapLayer plume={selectedPlume}></MapLayer>
