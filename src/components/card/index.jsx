@@ -75,7 +75,7 @@ export function PlumeCard({ plumeSourceName, startDatetime, endDatetime, imageUr
                 />
             </HorizontalLayout>
             <HorizontalLayout>
-                <a href={tiffUrl}>
+                <a href={tiffUrl} target='_blank' rel="noreferrer">
                     <Typography
                         variant="caption"
                         component="div"
