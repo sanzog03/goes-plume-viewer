@@ -12,7 +12,9 @@ import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
-const drawerWidth = 240;
+import { PlumeCard } from '../card';
+
+const drawerWidth = "25%";
 
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(
   ({ theme }) => ({
@@ -83,9 +85,16 @@ export function PersistentDrawerRight({open, setOpen}) {
             <ChevronRightIcon />
           </IconButton>
         </DrawerHeader>
-        Hello There
-        <Divider />
-        hello world
+          <PlumeCard
+            plumeSourceName="El Encino La Laguna Pipeline Block Valve 1"
+            plumeSourceId="BV1-1"
+            imageUrl="https://dev.ghg.center/api/raster/collections/goes-ch4/items/GOES-CH4_Permian_2023-07-26T17:36:00Z/preview.png?assets=rad&amp;rescale=0.0%2C0.2&amp;colormap_name=magma"
+            tiffUrl="https://dev.ghg.center/api/raster/collections/goes-ch4/items/GOES-CH4_Permian_2023-07-26T17:36:00Z/preview.png?assets=rad&amp;rescale=0.0%2C0.2&amp;colormap_name=magma"
+            lon="104.530079W"
+            lat="26.297686N"
+            maxPlumeConcentration="440"
+            concentrationUncertainity="234"
+          />
       </Drawer>
     </Box>
   );
