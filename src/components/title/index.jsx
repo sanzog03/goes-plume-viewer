@@ -1,15 +1,15 @@
 import { Paper, Typography } from "@mui/material";
-// import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import TextField from '@mui/material/TextField';
 import styled from "styled-components";
 import "./index.css";
 
 const HorizontalLayout = styled.div`
-    width: 100%;
+    width: 90%;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    margin-top: 5px;
-    margin-bottom: 5px;
+    margin: 15px;
 `;
 
 export const Title = () => {
@@ -24,16 +24,23 @@ export const Title = () => {
             >
                 Methane Plume - Data Portal
             </Typography>
-            {/* <HorizontalLayout>
-                <DatePicker 
-                    label="Start Date"
-                    defaultValue={'2022-04-17'} 
-                /> 
-                <DatePicker 
-                    label="End Date"
-                    defaultValue={'2022-04-20'} 
-                /> 
-            </HorizontalLayout> */}
+            <HorizontalLayout>
+                <TextField id="outlined-basic" label="Search by Plume Name" variant="outlined" style={{width: "100%"}}/>
+            </HorizontalLayout>
+            <HorizontalLayout>
+                <div style={{width: "45%", height: "90%"}} >
+                    <DatePicker 
+                        label="Start Date"
+                        // defaultValue={dayjs('2022-04-17')} 
+                    /> 
+                </div>
+                <div style={{width: "45%", height: "90%"}} >
+                    <DatePicker 
+                        label="End Date"
+                        // defaultValue={dayjs('2022-04-20')} 
+                    />
+                </div>
+            </HorizontalLayout>
         </Paper>
     )
 }

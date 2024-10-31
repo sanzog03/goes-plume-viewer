@@ -2,6 +2,8 @@ import { Fragment } from 'react';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import CssBaseline from '@mui/material/CssBaseline';
 import { DashboardContainer } from './pages/dashboardContainer';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 import './App.css';
 
@@ -11,12 +13,14 @@ function App() {
   return (
     <Fragment>
       <CssBaseline />
-      <BrowserRouter basename={BASE_PATH}>
-        <Routes>
-          <Route path="/" element={<DashboardContainer />}>
-          </Route>
-        </Routes>
-      </BrowserRouter>
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <BrowserRouter basename={BASE_PATH}>
+          <Routes>
+            <Route path="/" element={<DashboardContainer />}>
+            </Route>
+          </Routes>
+        </BrowserRouter>
+      </LocalizationProvider>
     </Fragment>
   );
 }

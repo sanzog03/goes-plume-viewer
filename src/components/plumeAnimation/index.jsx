@@ -43,7 +43,7 @@ export const PlumeAnimation = ({ plumes }) => {
                 handleAnimation(map, date, plumeDateIdxMap, plumes, bufferedLayer, bufferedSource);
             }
         });
-        map.addControl(timeline.current, "top-left");
+        map.addControl(timeline.current, "bottom-left");
 
         return () => {
             // cleanups
