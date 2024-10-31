@@ -1,22 +1,18 @@
-import * as React from 'react';
-import { styled, useTheme } from '@mui/material/styles';
+import { styled as styledmui } from '@mui/material/styles';
+import styled from "styled-components";
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
-import MuiAppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import CssBaseline from '@mui/material/CssBaseline';
-import List from '@mui/material/List';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
+import CssBaseline from '@mui/material/CssBaseline';
 import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
 import { PlumeCard } from '../card';
 
-const drawerWidth = "25%";
+const drawerWidth = "36rem";
 
-const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(
+const Main = styledmui('main', { shouldForwardProp: (prop) => prop !== 'open' })(
   ({ theme }) => ({
     flexGrow: 1,
     padding: theme.spacing(3),
@@ -47,7 +43,7 @@ const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(
   }),
 );
 
-const DrawerHeader = styled('div')(({ theme }) => ({
+const DrawerHeader = styledmui('div')(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   padding: theme.spacing(0, 1),
@@ -56,7 +52,20 @@ const DrawerHeader = styled('div')(({ theme }) => ({
   justifyContent: 'flex-start',
 }));
 
+const HorizontalLayout = styled.div`
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-top: 5px;
+    margin-bottom: 5px;
+`;
+
 export function PersistentDrawerRight({open, setOpen}) {
+
+  const location = "White, Indiana, United States";
+  const numberOfPlumes = "3";
+
   const handleDrawerClose = () => {
     setOpen(false);
   };
@@ -66,7 +75,6 @@ export function PersistentDrawerRight({open, setOpen}) {
       <CssBaseline />
       <Main open={open}>
         <DrawerHeader />
-        Hello world
       </Main>
       <Drawer
         sx={{
@@ -80,20 +88,37 @@ export function PersistentDrawerRight({open, setOpen}) {
         anchor="right"
         open={open}
       >
-        <DrawerHeader>
+        <DrawerHeader style={{ borderBottom: "2px solid #082A64" }}>
           <IconButton onClick={handleDrawerClose}>
             <ChevronRightIcon />
           </IconButton>
+          <HorizontalLayout>
+            <Typography
+                  variant="h6"
+                  component="div"
+                  sx={{ color: 'text.secondary' }}
+            >
+              { location }
+            </Typography>
+            <Typography
+                  variant="subtitle1"
+                  component="div"
+                  sx={{ color: 'text.secondary' }}
+            >
+              { numberOfPlumes + " Plumes"}
+            </Typography>
+          </HorizontalLayout>
         </DrawerHeader>
           <PlumeCard
             plumeSourceName="El Encino La Laguna Pipeline Block Valve 1"
-            plumeSourceId="BV1-1"
             imageUrl="https://dev.ghg.center/api/raster/collections/goes-ch4/items/GOES-CH4_Permian_2023-07-26T17:36:00Z/preview.png?assets=rad&amp;rescale=0.0%2C0.2&amp;colormap_name=magma"
             tiffUrl="https://dev.ghg.center/api/raster/collections/goes-ch4/items/GOES-CH4_Permian_2023-07-26T17:36:00Z/preview.png?assets=rad&amp;rescale=0.0%2C0.2&amp;colormap_name=magma"
             lon="104.530079W"
             lat="26.297686N"
-            maxPlumeConcentration="440"
-            concentrationUncertainity="234"
+            totalReleaseMass="440"
+            colEnhancements="234"
+            startDatetime="2019-05-24 06:15"
+            endDatetime="2019-05-24 07:15"
           />
       </Drawer>
     </Box>

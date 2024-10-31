@@ -19,7 +19,28 @@ const HorizontalLayout = styled.div`
     margin-bottom: 5px;
 `;
 
-export function PlumeCard({ plumeSourceName, plumeSourceId, imageUrl, tiffUrl, lon, lat, maxPlumeConcentration, concentrationUncertainity }) {
+const CaptionValue = ({ caption, value, className }) => {
+    return (
+        <div className={className}>
+            <Typography
+                variant="caption"
+                component="div"
+                sx={{ color: 'text.secondary' }}
+            >
+                { caption }
+            </Typography>
+            <Typography
+                variant="body2"
+                component="div"
+                sx={{ color: 'text.secondary' }}
+            >
+                { value }
+            </Typography>
+        </div>
+    )
+}
+
+export function PlumeCard({ plumeSourceName, startDatetime, endDatetime, imageUrl, tiffUrl, lon, lat, totalReleaseMass, colEnhancements }) {
   return (
     <Card sx={{ display: 'flex', margin: '15px'}}>
         <div
@@ -36,39 +57,22 @@ export function PlumeCard({ plumeSourceName, plumeSourceId, imageUrl, tiffUrl, l
       <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
         <CardContent sx={{ flex: '1 0 auto' }}>
             <HorizontalLayout>
-                <div className="card-plume card-plume-source-name">
-                    <Typography
-                        variant="caption"
-                        component="div"
-                        sx={{ color: 'text.secondary' }}
-                    >
-                        Plume Source Name
-                    </Typography>
-                    <Typography
-                        variant="body2"
-                        component="div"
-                        sx={{ color: 'text.secondary' }}
-                    >
-                        {plumeSourceName}
-                    </Typography>
-
-                </div>
-                <div className='card-plume card-plume-id'>
-                    <Typography
-                        variant="caption"
-                        component="div"
-                        sx={{ color: 'text.secondary' }}
-                    >
-                        Plume Id
-                    </Typography>
-                    <Typography
-                        variant="body2"
-                        component="div"
-                        sx={{ color: 'text.secondary' }}
-                    >
-                        {plumeSourceId}
-                    </Typography>
-                </div>
+                <CaptionValue
+                    caption = "Plume Source Name"
+                    value = {plumeSourceName}
+                />
+            </HorizontalLayout>
+            <HorizontalLayout>
+                <CaptionValue
+                    className="card-plume"
+                    caption = "Approx Start time"
+                    value = { startDatetime + " UTC" }
+                />
+                <CaptionValue
+                    className="card-plume"
+                    caption = "Approx End time"
+                    value = { endDatetime + " UTC" }
+                />
             </HorizontalLayout>
             <HorizontalLayout>
                 <a href={tiffUrl}>
@@ -82,74 +86,28 @@ export function PlumeCard({ plumeSourceName, plumeSourceId, imageUrl, tiffUrl, l
             </HorizontalLayout>
             <Divider></Divider>
             <HorizontalLayout>
-                <div className="card-plume card-plume-concentration">
-                    <Typography
-                        variant="caption"
-                        component="div"
-                        sx={{ color: 'text.secondary' }}
-                    >
-                        Max Plume Concentration
-                    </Typography>
-                    <Typography
-                        variant="body2"
-                        component="div"
-                        sx={{ color: 'text.secondary' }}
-                    >
-                        {maxPlumeConcentration}
-                    </Typography>
-
-                </div>
-                <div className='card-plume card-plume-uncertainity'>
-                    <Typography
-                        variant="caption"
-                        component="div"
-                        sx={{ color: 'text.secondary' }}
-                    >
-                        Concentration Uncertainity
-                    </Typography>
-                    <Typography
-                        variant="body2"
-                        component="div"
-                        sx={{ color: 'text.secondary' }}
-                    >
-                        {concentrationUncertainity}
-                    </Typography>
-                </div>
+                <CaptionValue
+                    className="card-plume"
+                    caption = "Total Release Mass"
+                    value = {totalReleaseMass + " Metric Tonne"}
+                />
+                <CaptionValue
+                    className="card-plume"
+                    caption = "Methane Column Enhancement"
+                    value = {colEnhancements + " mol m-2"}
+                />
             </HorizontalLayout>
             <HorizontalLayout>
-                <div className="card-plume card-plume-longitude">
-                    <Typography
-                        variant="caption"
-                        component="div"
-                        sx={{ color: 'text.secondary' }}
-                    >
-                        Longitude of max concentration
-                    </Typography>
-                    <Typography
-                        variant="body2"
-                        component="div"
-                        sx={{ color: 'text.secondary' }}
-                    >
-                        {lon}
-                    </Typography>
-
-                </div>
-                <div className='card-plume card-plume-uncertainity'>
-                    <Typography
-                        variant="caption"
-                        component="div"
-                        sx={{ color: 'text.secondary' }}
-                    >
-                        Longitude of max concentration
-                    </Typography>
-                    <Typography
-                        variant="body2"
-                        component="div"
-                        sx={{ color: 'text.secondary' }}
-                    >
-                        {lat}
-                    </Typography>
-                </div>
+                <CaptionValue
+                    className="card-plume"
+                    caption = "Longitude"
+                    value = {lon}
+                />
+                <CaptionValue
+                    className="card-plume"
+                    caption = "Latitude"
+                    value = {lat}
+                />
             </HorizontalLayout>
         </CardContent>
       </Box>
