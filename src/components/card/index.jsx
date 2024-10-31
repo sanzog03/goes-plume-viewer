@@ -19,7 +19,6 @@ const HorizontalLayout = styled.div`
     margin-bottom: 5px;
 `;
 
-
 export function PlumeCard({ plumeSourceName, plumeSourceId, imageUrl, tiffUrl, lon, lat, maxPlumeConcentration, concentrationUncertainity }) {
   return (
     <Card sx={{ display: 'flex', margin: '15px'}}>

@@ -32,7 +32,7 @@ export function Dashboard({ dataTree, metaData, zoomLevel }) {
     <Box className="fullSize">
       <div id="dashboard-map-container">
         <MainMap>
-            <MarkerFeature plots={plots} setSelectedPlume={handleSelectedPlume}></MarkerFeature>
+            <MarkerFeature plots={plots} setSelectedPlume={handleSelectedPlume} setOpenDrawer={setOpenDrawer}></MarkerFeature>
             <MapLayer plume={selectedPlume}></MapLayer>
             <PlumeAnimation plumes={plumesForAnimation}/>
             <MapControls onClickHamburger={() => setOpenDrawer(true)} />
