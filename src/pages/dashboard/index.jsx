@@ -13,7 +13,7 @@ import { getPlotsItems } from './helper';
 
 import "./index.css";
 
-export function Dashboard({ dataTree, metaData, zoomLevel }) {
+export function Dashboard({ dataTree, metaData, zoomLevel, collectionId }) {
   const [ selectedPlume, setSelectedPlume ] = useState(null);
   const [ plots, setPlots ] = useState([]);
   const [ plumesForAnimation, setPlumesForAnimation ] = useState([]);
@@ -39,7 +39,7 @@ export function Dashboard({ dataTree, metaData, zoomLevel }) {
             <PlumeAnimation plumes={plumesForAnimation}/>
             <MapControls onClickHamburger={() => setOpenDrawer(true)} />
         </MainMap>
-        <PersistentDrawerRight open={openDrawer} setOpen={setOpenDrawer}/>
+        <PersistentDrawerRight open={openDrawer} setOpen={setOpenDrawer} selectedPlume={selectedPlume} collectionId={collectionId}/>
       </div>
     </Box>
   );

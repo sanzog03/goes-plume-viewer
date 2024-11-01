@@ -50,6 +50,7 @@ export function DashboardContainer() {
             zoomLevel={zoomLevel}
             dataTree={dataTree}
             metaData={collectionMeta}
+            collectionId={collectionId}
         />
     );
 }
