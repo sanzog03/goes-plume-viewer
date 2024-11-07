@@ -8,7 +8,7 @@ import { dataTransformation } from './helper/dataTransform';
 export function DashboardContainer() {
     // get the query params
     const [ searchParams ] = useSearchParams();
-    const [ zoomLevel, setZoomLevel ] = useState (searchParams.get('zoom-level')); // let default zoom level controlled by map component
+    const [ zoomLevel, setZoomLevel ] = useState (searchParams.get('zoom-level') || []); // let default zoom level controlled by map component
     const [ collectionId ] = useState(searchParams.get("collection-id") || "goes-ch4-2");
 
     const [ collectionItems, setCollectionItems ] = useState([]);
