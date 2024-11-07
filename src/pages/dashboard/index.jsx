@@ -66,6 +66,12 @@ export function Dashboard({ dataTree, collectionId, metaData, zoomLevel, setZoom
     setDailyRepPlumeIds(dailyRepPlumeIds);
   }, [dataTree]);
 
+  useEffect(() => {
+    // helps the search feature to be on top of filter feature
+    const dailyFilteredRepPlumeIds = filteredDailyRepPlumes.map(plume => plume.plumeId);
+    setDailyRepPlumeIds(dailyFilteredRepPlumeIds);
+  }, [filteredDailyRepPlumes]);
+
   return (
     <Box className="fullSize">
       <div id="dashboard-map-container">
