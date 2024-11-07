@@ -12,7 +12,7 @@ import { MapZoom } from '../../components/mapZoom';
 
 import { PersistentDrawerRight } from "../../components/drawer";
 import { Title } from "../../components/title";
-import { getPlotsItems, getSelectedPlumeForId } from './helper';
+import { extractRepPlumes, getRepPlume } from './helper';
 import { Search } from "../../components/search";
 
 import "./index.css";
@@ -26,7 +26,8 @@ const HorizontalLayout = styled.div`
     margin: 15px;
 `;
 
-// interface SelectedPlume {
+// // A representational plume for subdaily plumes
+// interface dailyRepPlume {
 //   id: string,
 //   data: StacFeature, // object
 //   location: [string, string] // lon, lat
@@ -34,14 +35,14 @@ const HorizontalLayout = styled.div`
 
 export function Dashboard({ dataTree, collectionId, metaData, zoomLevel, setZoomLevel }) {
   const [ selectedPlume, setSelectedPlume ] = useState(null); // plume id looks like BV1-1
-  const [ plots, setPlots ] = useState([]);
-  const [ groupedPlumeIds, setGroupedPlumeIds ] = useState([]);
+  const [ dailyRepPlumes, setDailyRepPlumes ] = useState([]);
+  const [ dailyRepPlumeIds, setDailyRepPlumeIds ] = useState([]);
   const [ plumesForAnimation, setPlumesForAnimation ] = useState([]);
   const [ openDrawer, setOpenDrawer ] = useState(false);
 
-  const handleSelectedPlume = (plume) => {
-    const { stacFeature, location, plumeId} = plume;
-    setSelectedPlume(plume);
+  const handleSelectedPlume = (dailyRepPlume) => {
+    const { location, plumeId} = dailyRepPlume;
+    setSelectedPlume(dailyRepPlume);
     setPlumesForAnimation(dataTree[plumeId])
     setOpenDrawer(true);
     setZoomLevel(location)
@@ -49,16 +50,17 @@ export function Dashboard({ dataTree, collectionId, metaData, zoomLevel, setZoom
   }
 
   const handleSearchSelectedPlumeId = (plumeId) => {
-    const selectedPlume = getSelectedPlumeForId(plumeId, dataTree);
+    const selectedPlume = getRepPlume(plumeId, dataTree);
     handleSelectedPlume(selectedPlume);
   }
 
   useEffect(() => {
-    const plots = getPlotsItems(dataTree);
-    setPlots(plots)
+    if (!dataTree) return;
 
-    const groupedPlumeIds = Object.keys(dataTree);
-    setGroupedPlumeIds(groupedPlumeIds);
+    const dailyRepPlumes = extractRepPlumes(dataTree);
+    const dailyRepPlumeIds = dailyRepPlumes.map(plume => plume.plumeId);
+    setDailyRepPlumes(dailyRepPlumes)
+    setDailyRepPlumeIds(dailyRepPlumeIds);
   }, [dataTree]);
 
   return (
@@ -66,7 +68,7 @@ export function Dashboard({ dataTree, collectionId, metaData, zoomLevel, setZoom
       <div id="dashboard-map-container">
         <Title>
           <HorizontalLayout>
-            <Search ids={groupedPlumeIds} setSelectedPlumeId={handleSearchSelectedPlumeId}></Search>
+            <Search ids={dailyRepPlumeIds} setSelectedPlumeId={handleSearchSelectedPlumeId}></Search>
           </HorizontalLayout>
           <HorizontalLayout>
             <div style={{width: "45%", height: "90%"}} >
@@ -84,7 +86,7 @@ export function Dashboard({ dataTree, collectionId, metaData, zoomLevel, setZoom
           </HorizontalLayout>
         </Title>
         <MainMap>
-            <MarkerFeature plots={plots} setSelectedPlume={handleSelectedPlume}></MarkerFeature>
+            <MarkerFeature plots={dailyRepPlumes} setSelectedPlume={handleSelectedPlume}></MarkerFeature>
             <MapLayer plume={selectedPlume}></MapLayer>
             <PlumeAnimation plumes={plumesForAnimation}/>
             <MapControls onClickHamburger={() => setOpenDrawer(true)} />

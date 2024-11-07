@@ -1,4 +1,4 @@
-export function getPlotsItems(dataTree) {
+export function extractRepPlumes(dataTree) {
     // get list of items to plot.
     const plots = []
         Object.keys(dataTree).forEach(plumesId => {
@@ -14,11 +14,11 @@ export function getPlotsItems(dataTree) {
     return plots;
 }
 
-export function getSelectedPlumeForId(groupPlumeId, dataTree) {
-    const representingPlume = dataTree[groupPlumeId][0];
+export function getRepPlume(repPlumeId, dataTree) {
+    const representingPlume = dataTree[repPlumeId][0];
     const [lon1, lat1, _, __] = representingPlume.bbox;
     return {
-        plumeId: groupPlumeId,
+        plumeId: repPlumeId,
         location: [lon1, lat1],
         data: representingPlume
     };
