@@ -13,3 +13,13 @@ export function getPlotsItems(dataTree) {
         });
     return plots;
 }
+
+export function getSelectedPlumeForId(groupPlumeId, dataTree) {
+    const representingPlume = dataTree[groupPlumeId][0];
+    const [lon1, lat1, _, __] = representingPlume.bbox;
+    return {
+        plumeId: groupPlumeId,
+        location: [lon1, lat1],
+        data: representingPlume
+    };
+}

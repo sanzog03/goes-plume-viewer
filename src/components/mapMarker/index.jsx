@@ -4,7 +4,7 @@ import mapboxgl from 'mapbox-gl';
 import { useMapbox } from "../../context/mapContext";
 import "./index.css";
 
-export const MarkerFeature = ({ plots, setSelectedPlume, setOpenDrawer }) => {
+export const MarkerFeature = ({ plots, setSelectedPlume }) => {
     const { map } = useMapbox();
 
     useEffect(() => {
@@ -18,11 +18,6 @@ export const MarkerFeature = ({ plots, setSelectedPlume, setOpenDrawer }) => {
             const mel = marker.getElement();
             mel.addEventListener("click", (e) => {
                 setSelectedPlume(plot);
-                setOpenDrawer(true);
-                map.flyTo({
-                    center: [lon-0.001, lat], // Replace with the desired latitude and longitude
-                    zoom: 7,
-                });
             });
         });
     }, [plots, map]);
