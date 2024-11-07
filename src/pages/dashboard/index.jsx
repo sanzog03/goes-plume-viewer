@@ -26,13 +26,18 @@ const HorizontalLayout = styled.div`
     margin: 15px;
 `;
 
+// interface SelectedPlume {
+//   id: string,
+//   data: StacFeature, // object
+//   location: [string, string] // lon, lat
+// }
+
 export function Dashboard({ dataTree, collectionId, metaData, zoomLevel, setZoomLevel }) {
   const [ selectedPlume, setSelectedPlume ] = useState(null); // plume id looks like BV1-1
   const [ plots, setPlots ] = useState([]);
   const [ groupedPlumeIds, setGroupedPlumeIds ] = useState([]);
   const [ plumesForAnimation, setPlumesForAnimation ] = useState([]);
   const [ openDrawer, setOpenDrawer ] = useState(false);
-  // const { map } = useMapbox();
 
   const handleSelectedPlume = (plume) => {
     const { stacFeature, location, plumeId} = plume;
