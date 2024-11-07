@@ -8,7 +8,8 @@ export function extractRepPlumes(dataTree) {
             plots.push({
                 plumeId: plumesId,
                 location: [lon1, lat1],
-                data: representingPlume
+                data: representingPlume,
+                datetime: representingPlume.properties.datetime
             });
         });
     return plots;
@@ -20,6 +21,7 @@ export function getRepPlume(repPlumeId, dataTree) {
     return {
         plumeId: repPlumeId,
         location: [lon1, lat1],
-        data: representingPlume
+        data: representingPlume,
+        datetime: representingPlume.properties.datetime
     };
 }

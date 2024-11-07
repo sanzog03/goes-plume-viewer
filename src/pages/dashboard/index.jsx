@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import styled from "styled-components";
 
 import MainMap from '../../components/mainMap';
@@ -14,6 +13,7 @@ import { PersistentDrawerRight } from "../../components/drawer";
 import { Title } from "../../components/title";
 import { extractRepPlumes, getRepPlume } from './helper';
 import { Search } from "../../components/search";
+import { FilterByDate } from '../../components/filter';
 
 import "./index.css";
 
@@ -31,11 +31,13 @@ const HorizontalLayout = styled.div`
 //   id: string,
 //   data: StacFeature, // object
 //   location: [string, string] // lon, lat
+//   dateTime: string // date of the plume
 // }
 
 export function Dashboard({ dataTree, collectionId, metaData, zoomLevel, setZoomLevel }) {
   const [ selectedPlume, setSelectedPlume ] = useState(null); // plume id looks like BV1-1
   const [ dailyRepPlumes, setDailyRepPlumes ] = useState([]);
+  const [ filteredDailyRepPlumes, setFilteredDailyRepPlumes ] = useState([]);
   const [ dailyRepPlumeIds, setDailyRepPlumeIds ] = useState([]);
   const [ plumesForAnimation, setPlumesForAnimation ] = useState([]);
   const [ openDrawer, setOpenDrawer ] = useState(false);
@@ -59,7 +61,8 @@ export function Dashboard({ dataTree, collectionId, metaData, zoomLevel, setZoom
 
     const dailyRepPlumes = extractRepPlumes(dataTree);
     const dailyRepPlumeIds = dailyRepPlumes.map(plume => plume.plumeId);
-    setDailyRepPlumes(dailyRepPlumes)
+    setDailyRepPlumes(dailyRepPlumes);
+    setFilteredDailyRepPlumes(dailyRepPlumes);
     setDailyRepPlumeIds(dailyRepPlumeIds);
   }, [dataTree]);
 
@@ -71,22 +74,11 @@ export function Dashboard({ dataTree, collectionId, metaData, zoomLevel, setZoom
             <Search ids={dailyRepPlumeIds} setSelectedPlumeId={handleSearchSelectedPlumeId}></Search>
           </HorizontalLayout>
           <HorizontalLayout>
-            <div style={{width: "45%", height: "90%"}} >
-              <DatePicker
-                  label="Start Date"
-                  // defaultValue={dayjs('2022-04-17')}
-              />
-            </div>
-            <div style={{width: "45%", height: "90%"}} >
-              <DatePicker
-                  label="End Date"
-                  // defaultValue={dayjs('2022-04-20')}
-              />
-            </div>
+            <FilterByDate plumes={dailyRepPlumes} setFilteredPlumes={setFilteredDailyRepPlumes}/>
           </HorizontalLayout>
         </Title>
         <MainMap>
-            <MarkerFeature plots={dailyRepPlumes} setSelectedPlume={handleSelectedPlume}></MarkerFeature>
+            <MarkerFeature plots={filteredDailyRepPlumes} setSelectedPlume={handleSelectedPlume}></MarkerFeature>
             <MapLayer plume={selectedPlume}></MapLayer>
             <PlumeAnimation plumes={plumesForAnimation}/>
             <MapControls onClickHamburger={() => setOpenDrawer(true)} />

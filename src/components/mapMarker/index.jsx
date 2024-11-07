@@ -11,7 +11,7 @@ export const MarkerFeature = ({ plots, setSelectedPlume }) => {
         if (!map || !plots.length) return;
 
         // plot the plots in the map.
-        plots.forEach((plot) => {
+        const plottedMarkers = plots.map((plot) => {
             const { location } = plot;
             const [ lon, lat ] = location;
             const marker = addMarker(map, lon, lat);
@@ -19,8 +19,16 @@ export const MarkerFeature = ({ plots, setSelectedPlume }) => {
             mel.addEventListener("click", (e) => {
                 setSelectedPlume(plot);
             });
+            return mel;
         });
-    }, [plots, map]);
+
+        // clean-ups
+        return () => {
+            plottedMarkers.forEach((marker) => {
+                marker.parentNode.removeChild(marker);
+            })
+        }
+    }, [plots, map, setSelectedPlume]);
 
     return null;
 }

@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import CssBaseline from '@mui/material/CssBaseline';
 import { DashboardContainer } from './pages/dashboardContainer';
 import { LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 
 import './App.css';
 
@@ -13,7 +13,7 @@ function App() {
   return (
     <Fragment>
       <CssBaseline />
-      <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <LocalizationProvider dateAdapter={AdapterMoment}>
         <BrowserRouter basename={BASE_PATH}>
           <Routes>
             <Route path="/" element={<DashboardContainer />}>
