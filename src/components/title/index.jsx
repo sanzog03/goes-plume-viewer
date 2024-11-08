@@ -10,7 +10,7 @@ export const Title = ({ children }) => {
                 component="div"
                 sx={{ color: 'text.secondary' }}
                 align="center"
-                style={{ borderBottom: "2px solid #082A64" }}
+                style={{ borderBottom: "2px solid #082A64", margin: "10px" }}
             >
                 Methane Plume - Data Portal
             </Typography>
