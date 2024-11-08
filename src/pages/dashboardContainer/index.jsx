@@ -32,8 +32,16 @@ export function DashboardContainer() {
                 
                 const data = await fetchAllFromSTACAPI(collectionItemUrl);
                 setCollectionItems(data)
-                const transformedData = dataTransformation(data);
+
+                // TODO: change the dashboard component to take in data via new dataTree
+                const transformedDataNew = dataTransformation(data);
+                const transformedData = {};
+                Object.keys(transformedDataNew).forEach(key => {
+                    transformedData[key] = transformedDataNew[key].subDailyPlumes;
+                })
                 setDataTree(transformedData);
+                //
+
                 // get location and image information
                 // plot it in the map.
             } catch (error) {
