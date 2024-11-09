@@ -1,12 +1,12 @@
 import React from "react";
 import IconButton from "@mui/material/IconButton";
-import ExpandIcon from "@mui/icons-material/Expand";
-import ReactDOM from "react-dom";
+import ClearIcon from '@mui/icons-material/Clear';
+import ReactDOM from "react-dom/client";
 
-function ClearIcon({ onClick }) {
+function ClearMeasurementIcon({ onClick }) {
   return (
     <IconButton className="clear-icon" onClick={onClick}>
-      <ExpandIcon />
+     <ClearIcon/>
     </IconButton>
   );
 }
@@ -23,7 +23,7 @@ export class ClearMeasurementControl {
     this.container.addEventListener("contextmenu", (e) => e.preventDefault());
 
     const root = ReactDOM.createRoot(this.container);
-    root.render(<ClearIcon onClick={() => this.onClick()} />);
+    root.render(<ClearMeasurementIcon onClick={() => this.onClick()} />);
 
     this.root = root;
 

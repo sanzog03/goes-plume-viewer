@@ -1,6 +1,6 @@
 import React from "react";
 import IconButton from "@mui/material/IconButton";
-import ReactDOM from "react-dom";
+import ReactDOM from "react-dom/client";
 
 function ChangeUnitButton({ onClick }) {
   return (

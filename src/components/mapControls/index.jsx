@@ -7,7 +7,7 @@ import { MeasureDistanceControl } from "./measureDistance";
 import { ChangeUnitControl } from "./changeUnit";
 import { ClearMeasurementControl } from "./clearMeasurement";
 
-export const MapControls = ({ onClickHamburger }) => {
+export const MapControls = ({ onClickHamburger, onClickMeasureMode }) => {
   const { map } = useMapbox();
 
   useEffect(() => {
@@ -15,7 +15,7 @@ export const MapControls = ({ onClickHamburger }) => {
 
     const hamburgerControl = new HamburgerControl(onClickHamburger);
     const mapboxNavigation = new mapboxgl.NavigationControl();
-    const measurementControl = new MeasureDistanceControl();
+    const measurementControl = new MeasureDistanceControl(onClickMeasureMode);
     const changeUnitControl = new ChangeUnitControl();
     const clearMeasurementControl = new ClearMeasurementControl();
 
