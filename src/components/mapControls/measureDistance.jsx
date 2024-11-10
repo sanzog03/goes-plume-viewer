@@ -1,12 +1,16 @@
 import React from "react";
 import IconButton from "@mui/material/IconButton";
 import ExpandIcon from "@mui/icons-material/Expand";
+import StraightenIcon from '@mui/icons-material/Straighten';
 import ReactDOM from "react-dom/client";
 
-function MeasureButton() {
+function MeasureButton({ icon,onClick }) {
   return (
-    <IconButton className="measure-icon">
-      <ExpandIcon />
+    <IconButton className="measure-icon" onClick={onClick}>
+      {
+        icon ? <ExpandIcon /> : <StraightenIcon style={{ transform: 'rotate(90deg)' }} />
+      }
+      
     </IconButton>
   );
 }
@@ -17,13 +21,22 @@ export class MeasureDistanceControl {
     this.container = null
     this.map = null
     this.root = null
-    this._onClick = onClick;
+    this.icon = true
+    this._onClick = onClick
+  }
+  
+  handleClick = () => {
+    if (!this._mounted || !this.map) return;
+    this._onClick();
+    this.icon = !this.icon 
+    this.updateUI()
+    
   }
   updateUI() {
     if (this._mounted && this.root) {
       try {
         this.root.render(
-          < MeasureButton /> 
+          < MeasureButton icon={this.icon} onClick={this.handleClick} /> 
         );
       } catch (error) {
         console.warn('Failed to update UI:', error);
@@ -37,21 +50,22 @@ export class MeasureDistanceControl {
       this.container = document.createElement("div");
       this.container.className = "mapboxgl-ctrl mapboxgl-ctrl-group";
       this.container.addEventListener("contextmenu", (e) => e.preventDefault());
-      const root = ReactDOM.createRoot(this.container);
-      root.render(<MeasureButton />);
-
-      this.root = root;
-      this.container.onclick = this._onClick;
+     // Create root and mark as mounted
+      this.root = ReactDOM.createRoot(this.container);
+      this._mounted = true;
+      
+      // Initial render
+      this.updateUI();
+      
       return this.container;
     }
     catch (error) {
       console.error('Error adding control:', error);
-      return document.createElement("div"); // Return empty div in case of error
+      return document.createElement("div"); 
     }
   }
 
    onRemove() {
-    // Schedule unmount for next tick to avoid race conditions
     setTimeout(() => {
       try {
         this._mounted = false;
