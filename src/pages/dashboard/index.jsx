@@ -19,7 +19,9 @@ export function Dashboard({ dataTree, metaData, zoomLevel, collectionId }) {
   const [ plots, setPlots ] = useState([]);
   const [ plumesForAnimation, setPlumesForAnimation ] = useState([]);
   const [ openDrawer, setOpenDrawer ] = useState(false);
-  const [measureMode,setMeasureMode] = useState(false)
+  const [measureMode, setMeasureMode] = useState(false);
+  const [clearIcon, setClearIcon] = useState(false)
+   const [clearMap,setClearMap] = useState(false)
   const handleSelectedPlume = (plume) => {
     setSelectedPlume(plume);
     setPlumesForAnimation(dataTree[plume.plumeId])
@@ -38,10 +40,11 @@ export function Dashboard({ dataTree, metaData, zoomLevel, collectionId }) {
             <MarkerFeature plots={plots} setSelectedPlume={handleSelectedPlume} setOpenDrawer={setOpenDrawer}></MarkerFeature>
             <MapLayer plume={selectedPlume}></MapLayer>
             <PlumeAnimation plumes={plumesForAnimation}/>
-            <MeasurementLayer measureMode={measureMode} />
+            <MeasurementLayer measureMode={measureMode} setClearIcon={setClearIcon} clearMap={clearMap} setClearMap= {setClearMap}  />
             <MapControls onClickHamburger={() => setOpenDrawer(true)}  onClickMeasureMode={() => {
-                setMeasureMode((measureMode) => !measureMode);
-              }}
+            setMeasureMode((measureMode) => !measureMode)}}
+            onClickClearIcon={() => { setClearMap(true) }}
+            clearIcon={clearIcon}
 />
         </MainMap>
         <PersistentDrawerRight open={openDrawer} setOpen={setOpenDrawer} selectedPlume={selectedPlume} collectionId={collectionId}/>

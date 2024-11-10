@@ -21,16 +21,16 @@ const measureVariables = {
 // }
 
 // GeoJSON object to hold  measurement features
-const measurePoints = {
+export const MEASURE_POINTS = {
   type: "FeatureCollection",
   features: [],
 };
-const measureLine = {
+export const MEASURE_LINE = {
   type: "FeatureCollection",
   features: [],
 };
 //GeoJson object to hold distance label
-const measureLabel = {
+export const MEASURE_LABEL = {
   type: "Feature",
   properties: {
     description: "",
@@ -106,6 +106,12 @@ export function changeCursor(map, measurePoints, measureMode) {
   map.getCanvas().style.cursor = crosshair ? "crosshair" : "pointer";
 }
 
+export function cleanMap(map) {
+  map.getSource("measurePoints").setData(MEASURE_POINTS)
+   map.getSource("measureLine").setData(MEASURE_LINE);
+    map.getSource("measureLabel").setData(MEASURE_LABEL);
+}
+
 export function findMeasurementAnchor(e, map, measurePoints) {
   const features = map.queryRenderedFeatures(e.point, {
     layers: ["measure-points"],
@@ -127,24 +133,7 @@ export function findMeasurementAnchor(e, map, measurePoints) {
       ),
     };
   }
-  //If there is a point then remove the anchor on second click
-  if (totalPoints?.length === 1 && features?.length === 0) {
-    map.getSource("measureLine").setData({
-      type: "Feature",
-      geometry: {
-        type: "LineString",
-        coordinates: [],
-      },
-    });
-    map.getSource("measureLabel").setData({
-      ...measureLabel,
-      geometry: {
-        ...measureLabel.geometry,
-        coordinates: [],
-      },
-    });
-    //Add new anchor
-  } else if (
+  else if (
     !totalPoints ||
     (totalPoints?.length === 0 && features?.length === 0)
   ) {
@@ -193,7 +182,6 @@ export function addMeasurementSource(
     type: "geojson",
     data: measureLabelAnchor,
   });
-  console.log("Added Source");
 }
 
 export function addMeasurementLayer(map) {
@@ -234,9 +222,9 @@ export function removeLineLayer(map) {
 }
 export function removeMeasurementSource(map) {
   if (map) {
-    map.getSource("measureLabel")?.setData(measureLabel);
-    map.getSource("measurePoints")?.setData(measurePoints);
-    map.getSource("measureLine")?.setData(measureLine);
+    map.getSource("measureLabel")?.setData(MEASURE_LABEL);
+    map.getSource("measurePoints")?.setData(MEASURE_POINTS);
+    map.getSource("measureLine")?.setData(MEASURE_LINE);
   }
 }
 

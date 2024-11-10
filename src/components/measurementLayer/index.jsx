@@ -8,23 +8,34 @@ import {
   removeMeasurementLayer,
   removeMeasurementSource,
   changeCursor,
+  cleanMap,
+  MEASURE_LINE,
+  MEASURE_LABEL,
+  MEASURE_POINTS,
 } from "../../utils/measureDistance";
 
-export const MeasurementLayer = ({ measureMode }) => {
+export const MeasurementLayer = ({ measureMode,setClearIcon,clearMap,setClearMap }) => {
   const { map } = useMapbox();
   const [measurePoints, setMeasurePoints] = useState(null);
   const [measureLine, setMeasureLine] = useState(null);
   const [measureLabel, setMeasureLabel] = useState(null);
-
-  const clearMeasurementState = () => {
-    setMeasurePoints({
-      type: "FeatureCollection",
-      features: [],
-    });
+ 
+ 
+  
+  
+  const clearMeasurementState = () => { 
+    setMeasureLine(MEASURE_LINE);
+    setMeasureLabel(MEASURE_LABEL);
+    setMeasurePoints(MEASURE_POINTS)
   };
 
+  
   const handleClick = (e) => {
     const anchor = findMeasurementAnchor(e, map, measurePoints);
+    if (!anchor?.features?.length) {
+      cleanMap(map)
+      setClearIcon(false)
+    } 
     setMeasurePoints(anchor);
     map.getSource("measurePoints").setData(anchor);
     map.moveLayer("measure-points");
@@ -39,10 +50,21 @@ export const MeasurementLayer = ({ measureMode }) => {
     setMeasureLine(line);
     setMeasureLabel(label);
   };
+  
+   useEffect(() => {
+    if (clearMap) {
+      cleanMap(map)
+      clearMeasurementState();
+      setClearIcon(false)
+      setClearMap(false)
+    }
+  
+  }, [clearMap, map])
 
   useEffect(() => {
     if (!map) return;
     if (measurePoints?.features.length > 0 && measureMode) {
+      setClearIcon(true)
       map.on("mousemove", handleMouseMovement);
     }
     return () => {
