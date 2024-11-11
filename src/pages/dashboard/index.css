@@ -39,3 +39,26 @@
     border-radius: 5px;
     z-index: 1000;
 }
+.map-icon{
+    color:#ffffff;
+}
+
+button.measure-icon{
+    display: flex;
+    transform: rotate(90deg);
+    align-items:center;
+    color:#000000;
+}
+button.change-unit{
+    display: flex;
+    font-size:medium;
+    font-weight:bold;
+    align-items:center;
+    color:#000000;
+}
+button.clear-icon{
+    display: flex;
+    transform: rotate(90deg);
+    align-items:center;
+    color:#000000;
+}

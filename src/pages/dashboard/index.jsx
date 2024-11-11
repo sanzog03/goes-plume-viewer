@@ -16,6 +16,7 @@ import { Search } from "../../components/search";
 import { FilterByDate } from '../../components/filter';
 
 import "./index.css";
+import { MeasurementLayer } from '../../components/measurementLayer';
 
 
 const HorizontalLayout = styled.div`
@@ -42,6 +43,10 @@ export function Dashboard({ dataTree, collectionId, metaData, zoomLevel, setZoom
   const [ plumesForAnimation, setPlumesForAnimation ] = useState([]);
   const [ openDrawer, setOpenDrawer ] = useState(false);
 
+  const [measureMode, setMeasureMode] = useState(false);
+  const [clearMeasurementIcon, setClearMeasurementIcon] = useState(false)
+  const [clearMeasurementLayer, setClearMeasurementLayer] = useState(false)
+  
   const handleSelectedPlume = (dailyRepPlume) => {
     const { location, plumeId} = dailyRepPlume;
     setSelectedPlume(dailyRepPlume);
@@ -87,7 +92,11 @@ export function Dashboard({ dataTree, collectionId, metaData, zoomLevel, setZoom
             <MarkerFeature plots={filteredDailyRepPlumes} setSelectedPlume={handleSelectedPlume}></MarkerFeature>
             <MapLayer plume={selectedPlume}></MapLayer>
             <PlumeAnimation plumes={plumesForAnimation}/>
-            <MapControls onClickHamburger={() => setOpenDrawer(true)} />
+            <MeasurementLayer measureMode={measureMode} setClearMeasurementIcon={setClearMeasurementIcon} clearMeasurementLayer={clearMeasurementLayer} setClearMeasurementLayer= {setClearMeasurementLayer}  />
+            <MapControls onClickHamburger={() => setOpenDrawer(true)}  onClickMeasureMode={() => {
+                setMeasureMode((measureMode) => !measureMode)}}
+                onClickClearIcon={() => { setClearMeasurementLayer(true) }}
+                clearMeasurementIcon={clearMeasurementIcon}/>
             <MapZoom zoomLevel={zoomLevel} />
         </MainMap>
         <PersistentDrawerRight open={openDrawer} setOpen={setOpenDrawer} selectedPlume={selectedPlume} collectionId={collectionId}/>
