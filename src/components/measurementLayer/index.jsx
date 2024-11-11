@@ -20,20 +20,16 @@ export const MeasurementLayer = ({ measureMode,setClearIcon,clearMap,setClearMap
   const [measureLine, setMeasureLine] = useState(null);
   const [measureLabel, setMeasureLabel] = useState(null);
  
- 
-  
-  
   const clearMeasurementState = () => { 
     setMeasureLine(MEASURE_LINE);
     setMeasureLabel(MEASURE_LABEL);
     setMeasurePoints(MEASURE_POINTS)
   };
 
-  
   const handleClick = (e) => {
     const anchor = findMeasurementAnchor(e, map, measurePoints);
     if (!anchor?.features?.length) {
-      cleanMap(map)
+      cleanMap(map) 
       setClearIcon(false)
     } 
     setMeasurePoints(anchor);

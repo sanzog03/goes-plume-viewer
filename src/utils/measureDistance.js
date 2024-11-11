@@ -108,8 +108,8 @@ export function changeCursor(map, measurePoints, measureMode) {
 
 export function cleanMap(map) {
   map.getSource("measurePoints").setData(MEASURE_POINTS)
-   map.getSource("measureLine").setData(MEASURE_LINE);
-    map.getSource("measureLabel").setData(MEASURE_LABEL);
+  map.getSource("measureLine").setData(MEASURE_LINE);
+  map.getSource("measureLabel").setData(MEASURE_LABEL);
 }
 
 export function findMeasurementAnchor(e, map, measurePoints) {

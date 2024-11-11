@@ -8,7 +8,7 @@ import { dataTransformation } from './helper/dataTransform';
 export function DashboardContainer() {
     // get the query params
     const [ searchParams ] = useSearchParams();
-    const [ zoomLevel ] = useState (searchParams.get('zoom-level')); // let default zoom level controlled by map component
+    const [ zoomLevel, setZoomLevel ] = useState (searchParams.get('zoom-level') || []); // let default zoom level controlled by map component
     const [ collectionId ] = useState(searchParams.get("collection-id") || "goes-ch4-2");
 
     const [ collectionItems, setCollectionItems ] = useState([]);
@@ -32,8 +32,16 @@ export function DashboardContainer() {
                 
                 const data = await fetchAllFromSTACAPI(collectionItemUrl);
                 setCollectionItems(data)
-                const transformedData = dataTransformation(data);
+
+                // TODO: change the dashboard component to take in data via new dataTree
+                const transformedDataNew = dataTransformation(data);
+                const transformedData = {};
+                Object.keys(transformedDataNew).forEach(key => {
+                    transformedData[key] = transformedDataNew[key].subDailyPlumes;
+                })
                 setDataTree(transformedData);
+                //
+
                 // get location and image information
                 // plot it in the map.
             } catch (error) {
@@ -48,6 +56,7 @@ export function DashboardContainer() {
         <Dashboard
             data={collectionItems}
             zoomLevel={zoomLevel}
+            setZoomLevel={setZoomLevel}
             dataTree={dataTree}
             metaData={collectionMeta}
             collectionId={collectionId}

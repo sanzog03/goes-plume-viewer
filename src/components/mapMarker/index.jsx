@@ -4,28 +4,31 @@ import mapboxgl from 'mapbox-gl';
 import { useMapbox } from "../../context/mapContext";
 import "./index.css";
 
-export const MarkerFeature = ({ plots, setSelectedPlume, setOpenDrawer }) => {
+export const MarkerFeature = ({ plots, setSelectedPlume }) => {
     const { map } = useMapbox();
 
     useEffect(() => {
         if (!map || !plots.length) return;
 
         // plot the plots in the map.
-        plots.forEach((plot) => {
+        const plottedMarkers = plots.map((plot) => {
             const { location } = plot;
             const [ lon, lat ] = location;
             const marker = addMarker(map, lon, lat);
             const mel = marker.getElement();
             mel.addEventListener("click", (e) => {
                 setSelectedPlume(plot);
-                setOpenDrawer(true);
-                map.flyTo({
-                    center: [lon-0.001, lat], // Replace with the desired latitude and longitude
-                    zoom: 7,
-                });
             });
+            return mel;
         });
-    }, [plots, map]);
+
+        // clean-ups
+        return () => {
+            plottedMarkers.forEach((marker) => {
+                marker.parentNode.removeChild(marker);
+            })
+        }
+    }, [plots, map, setSelectedPlume]);
 
     return null;
 }
