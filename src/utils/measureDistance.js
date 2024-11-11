@@ -106,7 +106,7 @@ export function changeCursor(map, measurePoints, measureMode) {
   map.getCanvas().style.cursor = crosshair ? "crosshair" : "pointer";
 }
 
-export function cleanMap(map) {
+export function cleanMeasurementControlLayers(map) {
   map.getSource("measurePoints").setData(MEASURE_POINTS)
   map.getSource("measureLine").setData(MEASURE_LINE);
   map.getSource("measureLabel").setData(MEASURE_LABEL);

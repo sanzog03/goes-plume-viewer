@@ -6,7 +6,7 @@ import { MeasureDistanceControl } from "./measureDistance";
 import { ChangeUnitControl } from "./changeUnit";
 import { ClearMeasurementControl } from "./clearMeasurement";
  
-export const MapControls = ({ onClickHamburger, onClickMeasureMode,onClickClearIcon,clearIcon }) => {
+export const MapControls = ({ onClickHamburger, onClickMeasureMode,onClickClearIcon,clearMeasurementIcon }) => {
   const { map } = useMapbox();
   
   useEffect(() => {
@@ -35,17 +35,17 @@ export const MapControls = ({ onClickHamburger, onClickMeasureMode,onClickClearI
    useEffect(() => {
     if (!map) return;
 
-    const clearMeasurementControl = clearIcon?new ClearMeasurementControl(onClickClearIcon):null
+    const clearMeasurementControl = clearMeasurementIcon?new ClearMeasurementControl(onClickClearIcon):null
   
-    if (clearIcon) {
+    if (clearMeasurementIcon) {
       map.addControl(clearMeasurementControl);
     }
 
     return () => {
       // clean ups
-      if (clearMeasurementControl &&clearIcon) map.removeControl(clearMeasurementControl)
+      if (clearMeasurementControl &&clearMeasurementIcon) map.removeControl(clearMeasurementControl)
     };
-  }, [map, clearIcon]);
+  }, [map, clearMeasurementIcon]);
   
 
 

@@ -44,8 +44,8 @@ export function Dashboard({ dataTree, collectionId, metaData, zoomLevel, setZoom
   const [ openDrawer, setOpenDrawer ] = useState(false);
 
   const [measureMode, setMeasureMode] = useState(false);
-  const [clearIcon, setClearIcon] = useState(false)
-  const [clearMap, setClearMap] = useState(false) 
+  const [clearMeasurementIcon, setClearMeasurementIcon] = useState(false)
+  const [clearMeasurementLayer, setClearMeasurementLayer] = useState(false)
   
   const handleSelectedPlume = (dailyRepPlume) => {
     const { location, plumeId} = dailyRepPlume;
@@ -92,11 +92,11 @@ export function Dashboard({ dataTree, collectionId, metaData, zoomLevel, setZoom
             <MarkerFeature plots={filteredDailyRepPlumes} setSelectedPlume={handleSelectedPlume}></MarkerFeature>
             <MapLayer plume={selectedPlume}></MapLayer>
             <PlumeAnimation plumes={plumesForAnimation}/>
-            <MeasurementLayer measureMode={measureMode} setClearIcon={setClearIcon} clearMap={clearMap} setClearMap= {setClearMap}  />
+            <MeasurementLayer measureMode={measureMode} setClearMeasurementIcon={setClearMeasurementIcon} clearMeasurementLayer={clearMeasurementLayer} setClearMeasurementLayer= {setClearMeasurementLayer}  />
             <MapControls onClickHamburger={() => setOpenDrawer(true)}  onClickMeasureMode={() => {
                 setMeasureMode((measureMode) => !measureMode)}}
-                onClickClearIcon={() => { setClearMap(true) }}
-                clearIcon={clearIcon}/>
+                onClickClearIcon={() => { setClearMeasurementLayer(true) }}
+                clearMeasurementIcon={clearMeasurementIcon}/>
             <MapZoom zoomLevel={zoomLevel} />
         </MainMap>
         <PersistentDrawerRight open={openDrawer} setOpen={setOpenDrawer} selectedPlume={selectedPlume} collectionId={collectionId}/>
