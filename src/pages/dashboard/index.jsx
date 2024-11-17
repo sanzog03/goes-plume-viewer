@@ -80,18 +80,20 @@ export function Dashboard({ dataTree, collectionId, metaData, zoomLevel, setZoom
   return (
     <Box className="fullSize">
       <div id="dashboard-map-container">
+         <MainMap>
         <Title>
           <HorizontalLayout>
             <Search ids={dailyRepPlumeIds} setSelectedPlumeId={handleSearchSelectedPlumeId}></Search>
           </HorizontalLayout>
           <HorizontalLayout>
             <FilterByDate plumes={dailyRepPlumes} setFilteredPlumes={setFilteredDailyRepPlumes}/>
-          </HorizontalLayout>
+            </HorizontalLayout>
+            <HorizontalLayout>
+              <PlumeAnimation plumes={plumesForAnimation} />
+            </HorizontalLayout>
         </Title>
-        <MainMap>
             <MarkerFeature plots={filteredDailyRepPlumes} setSelectedPlume={handleSelectedPlume}></MarkerFeature>
             <MapLayer plume={selectedPlume}></MapLayer>
-            <PlumeAnimation plumes={plumesForAnimation}/>
             <MeasurementLayer measureMode={measureMode} setClearMeasurementIcon={setClearMeasurementIcon} clearMeasurementLayer={clearMeasurementLayer} setClearMeasurementLayer= {setClearMeasurementLayer}  />
             <MapControls onClickHamburger={() => setOpenDrawer(true)}  onClickMeasureMode={() => {
                 setMeasureMode((measureMode) => !measureMode)}}

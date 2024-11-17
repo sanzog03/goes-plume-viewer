@@ -43,8 +43,8 @@ export const PlumeAnimation = ({ plumes }) => {
                 handleAnimation(map, date, plumeDateIdxMap, plumes, bufferedLayer, bufferedSource);
             }
         });
-        map.addControl(timeline.current, "bottom-left");
-
+        const timelineControllerElement = timeline.current.onAdd(map)
+        document.querySelector('#plume-animation-controller').append(timelineControllerElement)
         return () => {
             // cleanups
             bufferedLayer.forEach(layer => { if (layerExists(map, layer)) map.removeLayer(layer) });
@@ -59,7 +59,8 @@ export const PlumeAnimation = ({ plumes }) => {
     }, [plumes, map]);
 
     return (
-        <div className="plume-animation-controller-container">
+        <div style={{ width: "100%", height: "100%" }} className="player-container">
+            <div id="plume-animation-controller"></div>
         </div>
     );
 }
